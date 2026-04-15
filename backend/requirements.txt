@@ -4,9 +4,8 @@ asyncpg
 sqlalchemy
 alembic
 python-dotenv
-passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
-aiogram
 httpx
 bcrypt==4.0.1
+pydantic-settings
