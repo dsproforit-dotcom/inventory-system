@@ -265,3 +265,54 @@ async function importExcel(input) {
     };
     reader.readAsArrayBuffer(file);
 }
+
+async function deleteSelected() {
+    const checked = [...document.querySelectorAll('.row-select:checked')];
+    if (checked.length === 0) return alert('Please select at least one item!');
+
+    if (!confirm(`⚠️ DELETE ${checked.length} selected items permanently?\n\nAre you sure?`)) return;
+
+    let success = 0;
+    let failed = 0;
+
+    showMessage(`⏳ Deleting ${checked.length} items...`, 'loading');
+
+    for (const cb of checked) {
+        const item = currentResults[parseInt(cb.value)];
+        try {
+            await api.deleteItem(item.item_id);
+            success++;
+        } catch (e) {
+            failed++;
+        }
+    }
+
+    showMessage(
+        `✅ Deleted: ${success}, Failed: ${failed}`,
+        failed > 0 ? 'error' : 'success'
+    );
+
+    await fetchFullInventory();
+    loadDashboardData();
+    fullHistoryData = [];
+}
+
+
+function downloadExcelTemplate() {
+    const template = [
+        {
+            'Item ID': 'ITM-001 (optional)',
+            'Name': 'Example: Cisco Switch',
+            'Category': 'Example: Networking Gear',
+            'Quantity': 5,
+            'Location': 'Example: IT Warehouse',
+            'Picture': 'https://... (optional)',
+            'Notes': 'Any notes (optional)'
+        }
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(template);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Items');
+    XLSX.writeFile(wb, 'inventory_template.xlsx');
+}
