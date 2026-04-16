@@ -13,7 +13,7 @@ function openModal() {
 
 function closeModal() {
     document.getElementById('addModal').style.display = 'none';
-    ['addId', 'addName', 'addQty', 'addPic', 'addNotes', 'addResp'].forEach(id => {
+    ['addId', 'addName', 'addQty', 'addPic', 'addNotes'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
     });
@@ -68,15 +68,14 @@ function openEditModalByIndex(index) {
     document.getElementById('editLocation').value = currentEditItem.location;
     document.getElementById('editPic').value = currentEditItem.picture_url || '';
     document.getElementById('editNotes').value = currentEditItem.notes || '';
-    document.getElementById('editResp').value = '';
-
+    
     document.getElementById('editModal').style.display = 'block';
 }
 
 function closeEditModal() {
     document.getElementById('editModal').style.display = 'none';
     currentEditItem = null;
-    document.getElementById('editResp').value = '';
+    
 }
 
 async function submitEditItem() {
@@ -149,7 +148,7 @@ function openTransferModal() {
 
 function closeTransferModal() {
     document.getElementById('transferModal').style.display = 'none';
-    ['transItemId', 'transQty', 'transResp', 'transNotes'].forEach(id => {
+    ['transItemId', 'transQty', 'transNotes'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
     });
