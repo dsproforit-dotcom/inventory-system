@@ -137,16 +137,19 @@
                     <button onclick="clearHistoryFilters()" class="btn-clear"
                         style="flex:none; width:42px; height:42px; padding:0; min-width:unset; font-size:16px; margin-top:15px;">🗑️</button>
                 </div>
-                <div class="button-group">                    
-                    <button onclick="downloadCSV()" style="background:#00796b;">📥 CSV</button>
-                    <button onclick="printSelectedQR()" style="background:#6f42c1;">🔳 Print QR</button>
-                </div>
                 <div class="button-group">
                     <button onclick="openModal()" class="btn-add">➕ Add Item</button>
                     <button onclick="openTransferModal()" class="btn-transfer">🔄 Action</button>
-                    <button onclick="document.getElementById('excelImport').click()" style="background:#1565c0;">📂 Import Excel</button>
+                </div>
+                <div class="button-group">
+                    <button onclick="document.getElementById('excelImport').click()" style="background:#1565c0;">📂 Import
+                        Excel</button>
                     <button onclick="downloadExcelTemplate()" style="background:#00796b;">📋 Template</button>
                     <button onclick="deleteSelected()" style="background:#dc3545;">🗑️ Delete Selected</button>
+                </div>
+                <div class="button-group">                    
+                    <button onclick="downloadCSV()" style="background:#00796b;">📥 CSV</button>
+                    <button onclick="printSelectedQR()" style="background:#6f42c1;">🔳 Print QR</button>
                 </div>
             </div>
 
