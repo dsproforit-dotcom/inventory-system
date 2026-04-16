@@ -1,7 +1,7 @@
 // =========================================================
 // 🌐 API — კავშირი FastAPI backend-თან
 // =========================================================
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://inventory-system-l0b3.onrender.com";
 
 // ტოკენის მართვა
 function getToken() {
