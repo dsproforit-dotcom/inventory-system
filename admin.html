@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — IT Inventory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- LOGIN CHECK -->
+    <div id="accessDenied" style="display:none; text-align:center; padding:100px 20px;">
+        <h2 style="color:#dc3545;">🚫 Access Denied</h2>
+        <p style="color:#7f8c8d;">You need admin privileges to access this page.</p>
+        <a href="index.html" style="color:#1a73e8;">← Back to Inventory</a>
+    </div>
+
+    <div id="adminApp" style="display:none;">
+
+        <div style="text-align:center; margin-bottom:20px; position:relative;">
+            <a href="index.html"
+                style="position:absolute; left:10px; top:10px; background:#6c757d; border:none; font-size:13px; padding:6px 12px; border-radius:8px; cursor:pointer; color:white; text-decoration:none;">←
+                Back</a>
+            <h1>⚙️ Admin Panel</h1>
+            <div id="adminUserDisplay" style="color:#7f8c8d; font-size:13px;"></div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchAdminTab('users')" id="btn-users">👥 Users</button>
+            <button class="tab-btn" onclick="switchAdminTab('settings')" id="btn-settings">⚙️ Settings</button>
+        </div>
+
+        <!-- USERS TAB -->
+        <div id="view-users" class="tab-content active">
+            <div class="filter-container" style="margin-bottom:20px;">
+                <div class="filter-group">
+                    <label>Username *</label>
+                    <input type="text" id="newUsername" placeholder="username">
+                </div>
+                <div class="filter-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="newFullName" placeholder="Full Name">
+                </div>
+                <div class="filter-group">
+                    <label>Email *</label>
+                    <input type="text" id="newEmail" placeholder="email@company.com">
+                </div>
+                <div class="filter-group">
+                    <label>Password *</label>
+                    <input type="password" id="newPassword" placeholder="password">
+                </div>
+                <div class="filter-group">
+                    <label>Role</label>
+                    <select id="newRole">
+                        <option value="viewer">Viewer</option>
+                        <option value="manager">Manager</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button onclick="createUser()" class="btn-add">➕ Add User</button>
+                </div>
+            </div>
+
+            <div id="usersMessage" class="message" style="display:none;"></div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersBody">
+                        <tr>
+                            <td colspan="6" style="text-align:center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="view-settings" class="tab-content">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+
+                <!-- Categories -->
+                <div>
+                    <div class="filter-container" style="margin-bottom:15px;">
+                        <div class="filter-group">
+                            <label>New Category</label>
+                            <input type="text" id="newCategory" placeholder="e.g. Networking Gear">
+                        </div>
+                        <div class="button-group">
+                            <button onclick="addSetting('category')" class="btn-add">➕ Add</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesBody">
+                                <tr>
+                                    <td colspan="2" style="text-align:center;">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Locations -->
+                <div>
+                    <div class="filter-container" style="margin-bottom:15px;">
+                        <div class="filter-group">
+                            <label>New Location</label>
+                            <input type="text" id="newLocation" placeholder="e.g. IT Warehouse">
+                        </div>
+                        <div class="button-group">
+                            <button onclick="addSetting('location')" class="btn-add">➕ Add</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="locationsBody">
+                                <tr>
+                                    <td colspan="2" style="text-align:center;">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

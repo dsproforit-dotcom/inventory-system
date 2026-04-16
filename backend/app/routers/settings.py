@@ -18,14 +18,20 @@ async def get_settings(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """კატეგორიებისა და ლოკაციების სია"""
     result = await db.execute(select(Setting).order_by(Setting.type, Setting.value))
     settings = result.scalars().all()
 
     categories = [s.value for s in settings if s.type == "category"]
     locations = [s.value for s in settings if s.type == "location"]
+    category_ids = [str(s.id) for s in settings if s.type == "category"]
+    location_ids = [str(s.id) for s in settings if s.type == "location"]
 
-    return {"categories": categories, "locations": locations}
+    return {
+        "categories": categories,
+        "locations": locations,
+        "category_ids": category_ids,
+        "location_ids": location_ids
+    }
 
 @router.post("/", status_code=201)
 async def add_setting(
