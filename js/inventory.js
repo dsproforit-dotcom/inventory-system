@@ -192,3 +192,76 @@ function toggleSelectAll(masterCheckbox) {
         cb.checked = masterCheckbox.checked;
     });
 }
+
+
+// =========================================================
+// 📂 EXCEL IMPORT
+// =========================================================
+async function importExcel(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+
+            if (rows.length === 0) return alert('No data found in file!');
+
+            const confirm_import = confirm(`Found ${rows.length} items. Import all?`);
+            if (!confirm_import) return;
+
+            let success = 0;
+            let failed = 0;
+            let errors = [];
+
+            showMessage(`⏳ Importing ${rows.length} items...`, 'loading');
+
+            for (const row of rows) {
+                try {
+                    // სვეტების mapping — Sheets-ის სტრუქტურა
+                    const payload = {
+                        item_id: String(row['Item ID'] || '').trim() || null,
+                        name: String(row['Name'] || '').trim(),
+                        category: String(row['Category'] || '').trim(),
+                        quantity: parseInt(row['Quantity'] || row['Qty'] || 0),
+                        location: String(row['Location'] || '').trim(),
+                        picture_url: String(row['Picture'] || '').trim() || null,
+                        notes: String(row['Notes'] || '').trim() || null
+                    };
+
+                    // სახელი სავალდებულოა
+                    if (!payload.name) {
+                        failed++;
+                        continue;
+                    }
+
+                    await api.createItem(payload);
+                    success++;
+                } catch (e) {
+                    failed++;
+                    errors.push(row['Name'] || 'Unknown');
+                }
+            }
+
+            // input გასუფთავება
+            input.value = '';
+
+            showMessage(
+                `✅ Import complete! Success: ${success}, Failed: ${failed}`,
+                failed > 0 ? 'error' : 'success'
+            );
+
+            await fetchFullInventory();
+            loadDashboardData();
+            fullHistoryData = [];
+
+        } catch (e) {
+            alert('Error reading file: ' + e.message);
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}

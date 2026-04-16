@@ -141,6 +141,7 @@
                 <div class="button-group">
                     <button onclick="openModal()" class="btn-add">➕ Add Item</button>
                     <button onclick="openTransferModal()" class="btn-transfer">🔄 Action</button>
+                    <button onclick="document.getElementById('excelImport').click()" style="background:#1565c0;">📂 Import Excel</button>
                 </div>
             </div>
 
@@ -381,6 +382,9 @@
                 style="background:#dc3545; width:100%; padding:12px; border-radius:8px; color:white; border:none; font-size:16px;">Close</button>
         </div>
     </div>
+
+    <!-- hidden file input for Excel import -->
+    <input type="file" id="excelImport" accept=".xlsx,.xls,.csv" style="display:none;" onchange="importExcel(this)">
 
     <!-- =========================================================
      SCRIPTS
