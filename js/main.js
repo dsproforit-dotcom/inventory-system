@@ -112,6 +112,25 @@ async function initApp() {
         document.getElementById('userDisplay').innerText = `👤 ${user.full_name} (${user.role})`;
     }
 
+    // როლის მიხედვით ღილაკების მართვა
+    if (user) {
+        if (user.role === 'viewer') {
+            // viewer-ს ეს ღილაკები არ ჩანს
+            document.querySelector('[onclick="openModal()"]')?.style.setProperty('display', 'none');
+            document.querySelector('[onclick="openTransferModal()"]')?.style.setProperty('display', 'none');
+            document.querySelector('[onclick="deleteSelected()"]')?.style.setProperty('display', 'none');
+            document.querySelector('[onclick*="excelImport"]')?.style.setProperty('display', 'none');
+            document.querySelector('[onclick="downloadExcelTemplate()"]')?.style.setProperty('display', 'none');
+            document.querySelector('[onclick="printSelectedQR()"]')?.style.setProperty('display', 'none');
+        }
+
+        if (user.role === 'admin') {
+            // admin-ს admin პანელის ლინკი ჩანს
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) adminLink.style.display = 'inline-block';
+        }
+    }
+
     // Settings ჩატვირთვა
     try {
         appSettings = await api.getSettings();
@@ -143,3 +162,5 @@ window.onload = function () {
         showLoginPage();
     }
 };
+
+
