@@ -4,6 +4,7 @@ from .core.config import settings
 from .core.database import engine, Base
 from .routers import auth, items, history, dashboard, transfers
 from .routers import settings as settings_router
+from .routers import telegram
 
 # აპლიკაციის ინიციალიზაცია
 app = FastAPI(
@@ -42,3 +43,4 @@ app.include_router(history.router)
 app.include_router(dashboard.router)
 app.include_router(transfers.router)
 app.include_router(settings_router.router)
+app.include_router(telegram.router)
