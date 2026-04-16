@@ -102,7 +102,7 @@ async def create_item(
 ):
     """ახალი ნივთის დამატება"""
     # ID-ის გენერირება თუ არ არის მითითებული
-    item_id = data.item_id or f"ITM-{str(uuid.uuid4()).split('-')[0].upper()}"
+    item_id = data.item_id or str(uuid.uuid4()).split('-')[0].upper()
 
     # შევამოწმოთ ID უნიკალურია
     result = await db.execute(select(Item).where(Item.item_id == item_id))

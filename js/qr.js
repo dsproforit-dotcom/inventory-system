@@ -88,26 +88,55 @@ function printSelectedQR() {
         const safeId = item.id.replace(/[^a-zA-Z0-9]/g, '_');
         return `new QRCode(document.getElementById('qr-${safeId}'), {
       text: '${item.id}',
-      width: 100,
-      height: 100,
+      width: 90,
+      height: 90,
       colorDark: '#000000',
       colorLight: '#ffffff'
     });`;
     }).join('\n');
 
-    printWindow.document.write(`
+  printWindow.document.write(`
     <html>
     <head>
       <title>QR Sheet</title>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
       <style>
-        body { margin: 10px; font-family: 'Segoe UI', sans-serif; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .qr-item { border: 1px dashed #ccc; border-radius: 6px; padding: 8px; text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .qr-label { margin-top: 5px; }
-        .qr-label strong { display: block; font-size: 11px; max-width: 110px; word-break: break-word; }
-        .qr-label span { font-size: 10px; color: #666; }
-        @media print { body { margin: 0; } .grid { gap: 5px; } }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: white; }
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 4px;
+          padding: 8px;
+          width: 210mm;
+        }
+        .qr-item {
+          border: 1px dashed #aaa;
+          border-radius: 4px;
+          padding: 6px 4px;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          page-break-inside: avoid;
+        }
+        .qr-item img { max-width: 100%; height: auto; }
+        .qr-label { margin-top: 4px; }
+        .qr-label strong {
+          display: block;
+          font-size: 9px;
+          max-width: 120px;
+          word-break: break-word;
+          line-height: 1.2;
+        }
+        .qr-label span {
+          font-size: 8px;
+          color: #555;
+        }
+        @media print {
+          body { margin: 0; padding: 0; }
+          .grid { padding: 5mm; gap: 3px; }
+        }
       </style>
     </head>
     <body>
