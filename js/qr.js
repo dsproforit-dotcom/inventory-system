@@ -113,12 +113,15 @@ function printSelectedQR() {
         .qr-item {
           border: 1px dashed #aaa;
           border-radius: 4px;
-          padding: 6px 4px;
+          padding: 8px 4px;
           text-align: center;
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
           page-break-inside: avoid;
+          height: 180px;
+          width: 100%;
         }
         .qr-item img { max-width: 100%; height: auto; }
         .qr-label { margin-top: 4px; }
