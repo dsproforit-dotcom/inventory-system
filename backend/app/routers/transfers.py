@@ -8,6 +8,7 @@ from ..models.item import Item
 from ..models.history import History
 from ..models.user import User
 from .auth import get_current_user, require_manager
+from .telegram import send_telegram_message
 
 router = APIRouter(prefix="/transfers", tags=["Transfers"])
 
@@ -58,6 +59,13 @@ async def execute_transfer(
         )
         db.add(history)
         await db.commit()
+        await send_telegram_message(
+            f"📥 <b>RESTOCK</b>\n"
+            f"📦 <b>{item.name}</b> [{item.item_id}]\n"
+            f"📍 Location: {data.from_location}\n"
+            f"🔢 Added: {data.quantity}\n"
+            f"👤 By: {current_user.full_name}"
+        )
         return {"message": f"Restocked {data.quantity} units. New quantity: {item.quantity}"}
 
     # დანარჩენი ოპერაციები — მარაგის შემოწმება
@@ -120,4 +128,14 @@ async def execute_transfer(
     db.add(history)
     await db.commit()
 
+    await db.commit()
+
+    emoji = {"TRANSFER": "🔄", "ISSUE": "📤", "WRITE-OFF": "🗑️"}
+    await send_telegram_message(
+        f"{emoji.get(action, '📋')} <b>{action}</b>\n"
+        f"📦 <b>{item.name}</b> [{item.item_id}]\n"
+        f"📍 {data.from_location}{f' ➔ {to_loc}' if action == 'TRANSFER' else ''}\n"
+        f"🔢 Quantity: {data.quantity}\n"
+        f"👤 By: {current_user.full_name}"
+    )
     return {"message": f"Action '{action}' completed successfully"}

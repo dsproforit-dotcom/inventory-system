@@ -10,6 +10,7 @@ from ..models.item import Item
 from ..models.history import History
 from ..models.user import User
 from .auth import get_current_user, require_manager
+from .telegram import send_telegram_message
 
 router = APIRouter(prefix="/items", tags=["Items"])
 
@@ -132,6 +133,14 @@ async def create_item(
     )
     db.add(history)
     await db.commit()
+    
+    await send_telegram_message(
+        f"➕ <b>NEW ITEM ADDED</b>\n"
+        f"📦 <b>{data.name}</b> [{item_id}]\n"
+        f"📍 Location: {data.location}\n"
+        f"🔢 Quantity: {data.quantity}\n"
+        f"👤 By: {current_user.full_name}"
+    )
 
     return {"message": f"Item '{data.name}' created successfully", "item_id": item_id}
 
@@ -195,6 +204,14 @@ async def update_item(
     db.add(history)
     await db.commit()
 
+    from .telegram import send_telegram_message
+    await send_telegram_message(
+        f"✏️ <b>ITEM EDITED</b>\n"
+        f"📦 <b>{data.name}</b> [{item_id}]\n"
+        f"📍 Location: {data.location}\n"
+        f"🔢 Quantity: {data.quantity}\n"
+        f"👤 By: {current_user.full_name}"
+    )
     return {"message": f"Item '{item_id}' updated successfully"}
 
 @router.delete("/{item_id}")
@@ -224,4 +241,11 @@ async def delete_item(
     await db.delete(item)
     await db.commit()
 
+    from .telegram import send_telegram_message
+    await send_telegram_message(
+        f"🗑️ <b>ITEM DELETED</b>\n"
+        f"📦 <b>{item.name}</b> [{item_id}]\n"
+        f"📍 Was at: {item.location}\n"
+        f"👤 By: {current_user.full_name}"
+    )
     return {"message": f"Item '{item_id}' deleted successfully"}
