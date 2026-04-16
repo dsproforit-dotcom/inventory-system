@@ -88,8 +88,8 @@ function printSelectedQR() {
         const safeId = item.id.replace(/[^a-zA-Z0-9]/g, '_');
         return `new QRCode(document.getElementById('qr-${safeId}'), {
       text: '${item.id}',
-      width: 90,
-      height: 90,
+      width: 120,
+      height: 120,
       colorDark: '#000000',
       colorLight: '#ffffff'
     });`;
@@ -105,7 +105,7 @@ function printSelectedQR() {
         body { font-family: 'Segoe UI', sans-serif; background: white; }
         .grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 4px;
           padding: 8px;
           width: 210mm;
