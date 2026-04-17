@@ -39,6 +39,18 @@ async def execute_transfer(
     item = result.scalar_one_or_none()
 
     if not item:
+        history = History(
+            item_id=data.item_id,
+            item_name="UNKNOWN",
+            action="ERROR",
+            from_location=data.from_location,
+            to_location="N/A",
+            quantity=data.quantity,
+            responsible=current_user.full_name,
+            comment=f"Item not found at '{data.from_location}'"
+        )
+        db.add(history)
+        await db.commit()
         raise HTTPException(
             status_code=404,
             detail=f"Item '{data.item_id}' not found at '{data.from_location}'"
@@ -70,6 +82,18 @@ async def execute_transfer(
 
     # დანარჩენი ოპერაციები — მარაგის შემოწმება
     if data.quantity > item.quantity:
+        history = History(
+            item_id=item.item_id,
+            item_name=item.name,
+            action="ERROR",
+            from_location=data.from_location,
+            to_location="N/A",
+            quantity=data.quantity,
+            responsible=current_user.full_name,
+            comment=f"Insufficient stock. Available: {item.quantity}, Requested: {data.quantity}"
+        )
+        db.add(history)
+        await db.commit()
         raise HTTPException(
             status_code=400,
             detail=f"Insufficient stock. Available: {item.quantity}"
@@ -126,8 +150,6 @@ async def execute_transfer(
         comment=data.notes or ""
     )
     db.add(history)
-    await db.commit()
-
     await db.commit()
 
     emoji = {"TRANSFER": "🔄", "ISSUE": "📤", "WRITE-OFF": "🗑️"}

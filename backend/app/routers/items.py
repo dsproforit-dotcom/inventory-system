@@ -109,6 +109,18 @@ async def create_item(
         select(Item).where(Item.item_id == item_id, Item.location == data.location)
     )
     if result.scalar_one_or_none():
+        history = History(
+            item_id=item_id,
+            item_name=data.name,
+            action="ERROR",
+            from_location="N/A",
+            to_location=data.location,
+            quantity=data.quantity,
+            responsible=current_user.full_name,
+            comment=f"Already exists at '{data.location}'"
+        )
+        db.add(history)
+        await db.commit()
         raise HTTPException(status_code=400, detail=f"Item ID '{item_id}' already exists at '{data.location}'")
 
     item = Item(
@@ -181,6 +193,18 @@ async def update_item(
     result = await db.execute(select(Item).where(Item.item_id == item_id))
     item = result.scalar_one_or_none()
     if not item:
+        history = History(
+            item_id=item_id,
+            item_name="UNKNOWN",
+            action="ERROR",
+            from_location="N/A",
+            to_location="N/A",
+            quantity=0,
+            responsible=current_user.full_name,
+            comment=f"Update failed: Item '{item_id}' not found"
+        )
+        db.add(history)
+        await db.commit()
         raise HTTPException(status_code=404, detail="Item not found")
 
     old_location = item.location
@@ -206,7 +230,7 @@ async def update_item(
     db.add(history)
     await db.commit()
 
-    from .telegram import send_telegram_message
+    
     await send_telegram_message(
         f"✏️ <b>ITEM EDITED</b>\n"
         f"📦 <b>{data.name}</b> [{item_id}]\n"
@@ -235,6 +259,18 @@ async def delete_item(
         items_to_delete = result.scalars().all()
 
     if not items_to_delete:
+        history = History(
+            item_id=item_id,
+            item_name="UNKNOWN",
+            action="ERROR",
+            from_location=location or "N/A",
+            to_location="N/A",
+            quantity=0,
+            responsible=current_user.full_name,
+            comment=f"Delete failed: Item '{item_id}' not found at '{location}'"
+        )
+        db.add(history)
+        await db.commit()
         raise HTTPException(status_code=404, detail="Item not found")
 
     for item in items_to_delete:
