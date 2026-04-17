@@ -280,7 +280,7 @@ async function deleteSelected() {
     for (const cb of checked) {
         const item = currentResults[parseInt(cb.value)];
         try {
-            await api.deleteItem(item.item_id);
+            await api.deleteItem(item.item_id, item.location);
             success++;
         } catch (e) {
             failed++;

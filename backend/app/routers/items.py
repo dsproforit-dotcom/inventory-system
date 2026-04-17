@@ -217,35 +217,44 @@ async def update_item(
 @router.delete("/{item_id}")
 async def delete_item(
     item_id: str,
+    location: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_manager)
 ):
-    """ნივთის წაშლა"""
-    result = await db.execute(select(Item).where(Item.item_id == item_id))
-    item = result.scalar_one_or_none()
-    if not item:
+    if location:
+        # კონკრეტული ლოკაციის ჩანაწერი წაიშლება
+        result = await db.execute(
+            select(Item).where(Item.item_id == item_id, Item.location == location)
+        )
+        items_to_delete = result.scalars().all()
+    else:
+        # ყველა ლოკაციის ჩანაწერი წაიშლება
+        result = await db.execute(select(Item).where(Item.item_id == item_id))
+        items_to_delete = result.scalars().all()
+
+    if not items_to_delete:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    # ისტორიაში ჩაწერა წაშლამდე
-    history = History(
-        item_id=item_id,
-        item_name=item.name,
-        action="DELETE",
-        from_location=item.location,
-        to_location="DELETED",
-        quantity=item.quantity,
-        responsible=current_user.full_name,
-        comment="Deleted via API"
-    )
-    db.add(history)
-    await db.delete(item)
+    for item in items_to_delete:
+        history = History(
+            item_id=item_id,
+            item_name=item.name,
+            action="DELETE",
+            from_location=item.location,
+            to_location="DELETED",
+            quantity=item.quantity,
+            responsible=current_user.full_name,
+            comment="Deleted via API"
+        )
+        db.add(history)
+        await db.delete(item)
+
     await db.commit()
 
-    from .telegram import send_telegram_message
     await send_telegram_message(
         f"🗑️ <b>ITEM DELETED</b>\n"
-        f"📦 <b>{item.name}</b> [{item_id}]\n"
-        f"📍 Was at: {item.location}\n"
+        f"📦 <b>{items_to_delete[0].name}</b> [{item_id}]\n"
+        f"📍 Location: {location or 'ALL'}\n"
         f"👤 By: {current_user.full_name}"
     )
     return {"message": f"Item '{item_id}' deleted successfully"}

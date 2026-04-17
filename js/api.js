@@ -94,7 +94,10 @@ const api = {
     },
     createItem: (data) => fetchAPI("POST", "/items/", data),
     updateItem: (itemId, data) => fetchAPI("PUT", `/items/${itemId}`, data),
-    deleteItem: (itemId) => fetchAPI("DELETE", `/items/${itemId}`),
+    deleteItem: (itemId, location = null) => {
+        const query = location ? `?location=${encodeURIComponent(location)}` : '';
+        return fetchAPI("DELETE", `/items/${itemId}${query}`);
+    },
 
     // Transfers
     transfer: (data) => fetchAPI("POST", "/transfers/", data),

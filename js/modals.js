@@ -123,7 +123,7 @@ async function deleteItem() {
     btn.disabled = true;
 
     try {
-        const response = await api.deleteItem(currentEditItem.item_id);
+        const response = await api.deleteItem(currentEditItem.item_id, currentEditItem.location);
         btn.innerText = "🗑️ Delete";
         btn.disabled = false;
         closeEditModal();
