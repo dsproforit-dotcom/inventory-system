@@ -127,7 +127,7 @@ async function initApp() {
         if (user.role === 'admin') {
             // admin-ს admin პანელის ლინკი ჩანს
             const adminLink = document.getElementById('adminLink');
-            if (adminLink) adminLink.style.display = 'inline-block';
+            if (adminLink) adminLink.style.display = 'inline-block';            
         }
     }
 
