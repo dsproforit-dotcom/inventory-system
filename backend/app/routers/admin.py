@@ -85,3 +85,27 @@ async def delete_user(
     await db.delete(user)
     await db.commit()
     return {"message": f"User {username} deleted"}
+
+
+
+class PasswordReset(BaseModel):
+    new_password: str
+
+@router.put("/users/{username}/reset-password")
+async def reset_password(
+    username: str,
+    data: PasswordReset,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    """მომხმარებლის პაროლის reset"""
+    from .auth import hash_password
+    
+    result = await db.execute(select(User).where(User.username == username))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.hashed_password = hash_password(data.new_password)
+    await db.commit()
+    return {"message": f"Password reset for {username}"}    

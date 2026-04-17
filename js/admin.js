@@ -92,6 +92,10 @@ function drawUsersTable(users) {
                         style="padding:6px 8px;min-width:unset;font-size:12px;background:${u.is_active ? '#fd7e14' : '#28a745'};">
                         ${u.is_active ? '🔒 Disable' : '🔓 Enable'}
                     </button>
+                    <button onclick="resetPassword('${u.username}')"
+                        style="padding:6px 8px;min-width:unset;font-size:12px;background:#1a73e8;">
+                        🔑
+                    </button>
                     <button onclick="deleteUser('${u.username}')"
                         style="padding:6px 8px;min-width:unset;font-size:12px;background:#dc3545;">
                         🗑️
@@ -150,6 +154,19 @@ async function toggleUser(username, isActive) {
         await fetchAPI('PUT', `/admin/users/${username}/toggle`);
         showAdminMessage(`✅ User ${action}d`, 'success');
         await loadUsers();
+    } catch (e) {
+        showAdminMessage('❌ ' + e.message, 'error');
+    }
+}
+
+async function resetPassword(username) {
+    const newPassword = prompt(`New password for "${username}":`);
+    if (!newPassword) return;
+    if (newPassword.length < 6) return alert('Password must be at least 6 characters!');
+
+    try {
+        await fetchAPI('PUT', `/admin/users/${username}/reset-password`, { new_password: newPassword });
+        showAdminMessage(`✅ Password reset for ${username}`, 'success');
     } catch (e) {
         showAdminMessage('❌ ' + e.message, 'error');
     }
