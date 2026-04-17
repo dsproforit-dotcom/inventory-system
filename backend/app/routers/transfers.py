@@ -101,8 +101,32 @@ async def execute_transfer(
 
     if action == "TRANSFER":
         if not data.to_location:
+            history = History(
+                item_id=item.item_id,
+                item_name=item.name,
+                action="ERROR",
+                from_location=data.from_location,
+                to_location="N/A",
+                quantity=data.quantity,
+                responsible=current_user.full_name,
+                comment="TRANSFER failed: to_location not specified"
+            )
+            db.add(history)
+            await db.commit()
             raise HTTPException(status_code=400, detail="to_location required for TRANSFER")
         if data.from_location == data.to_location:
+            history = History(
+                item_id=item.item_id,
+                item_name=item.name,
+                action="ERROR",
+                from_location=data.from_location,
+                to_location=data.to_location,
+                quantity=data.quantity,
+                responsible=current_user.full_name,
+                comment="TRANSFER failed: same location"
+            )
+            db.add(history)
+            await db.commit()
             raise HTTPException(status_code=400, detail="Locations cannot be the same")
 
         # მიმღებ ლოკაციაზე ნივთის მოძებნა
@@ -136,6 +160,18 @@ async def execute_transfer(
         to_loc = "REMOVED/CONSUMED"
 
     else:
+        history = History(
+            item_id=item.item_id,
+            item_name=item.name,
+            action="ERROR",
+            from_location=data.from_location,
+            to_location="N/A",
+            quantity=data.quantity,
+            responsible=current_user.full_name,
+            comment=f"Unknown action: {action}"
+        )
+        db.add(history)
+        await db.commit()
         raise HTTPException(status_code=400, detail=f"Unknown action: {action}")
 
     # ისტორიაში ჩაწერა
