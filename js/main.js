@@ -164,3 +164,71 @@ window.onload = function () {
 };
 
 
+
+// =========================================================
+// 👤 PROFILE MODAL
+// =========================================================
+function openProfileModal() {
+    const user = getCurrentUser();
+    if (user) {
+        document.getElementById('profileInfo').innerHTML = `
+            <p><strong>👤 Username:</strong> ${user.username}</p>
+            <p><strong>📝 Full Name:</strong> ${user.full_name}</p>
+            <p><strong>🎭 Role:</strong> ${user.role}</p>
+        `;
+    }
+    document.getElementById('profileModal').style.display = 'block';
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+    ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('profileMessage').style.display = 'none';
+}
+
+async function submitChangePassword() {
+    const current = document.getElementById('currentPassword').value.trim();
+    const newPass = document.getElementById('newPassword').value.trim();
+    const confirm = document.getElementById('confirmPassword').value.trim();
+    const msg = document.getElementById('profileMessage');
+
+    if (!current || !newPass || !confirm) {
+        msg.style.display = 'block';
+        msg.className = 'message error';
+        msg.innerText = '❌ Please fill all fields!';
+        return;
+    }
+
+    if (newPass !== confirm) {
+        msg.style.display = 'block';
+        msg.className = 'message error';
+        msg.innerText = '❌ Passwords do not match!';
+        return;
+    }
+
+    if (newPass.length < 6) {
+        msg.style.display = 'block';
+        msg.className = 'message error';
+        msg.innerText = '❌ Password must be at least 6 characters!';
+        return;
+    }
+
+    try {
+        await api.changePassword({
+            current_password: current,
+            new_password: newPass
+        });
+        msg.style.display = 'block';
+        msg.className = 'message success';
+        msg.innerText = '✅ Password changed successfully!';
+        ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+    } catch (e) {
+        msg.style.display = 'block';
+        msg.className = 'message error';
+        msg.innerText = '❌ ' + e.message;
+    }
+}

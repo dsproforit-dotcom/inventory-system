@@ -60,6 +60,10 @@
             <img src="https://i.ibb.co/LzkKyQFh/logo.png" alt="Logo" style="max-height:50px;">
             <h1>IT Inventory System</h1>
             <div id="userDisplay" style="color:#7f8c8d; font-size:13px; margin-top:-10px;"></div>
+            <button onclick="openProfileModal()"
+                style="position:absolute; right:90px; top:10px; background:#6c757d; border:none; font-size:13px; padding:6px 12px; border-radius:8px; cursor:pointer; color:white; min-width:unset; flex:none;">
+                👤 Profile
+            </button>
         </div>
 
         <div class="tabs">
@@ -386,6 +390,35 @@
                 style="width:100%; max-width:300px; margin:0 auto 15px auto; border-radius:8px; overflow:hidden;"></div>
             <button type="button" onclick="stopScanner()"
                 style="background:#dc3545; width:100%; padding:12px; border-radius:8px; color:white; border:none; font-size:16px;">Close</button>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header">
+                <h2>👤 My Profile</h2>
+                <span class="close" onclick="closeProfileModal()">&times;</span>
+            </div>
+            <div id="profileInfo" style="margin-bottom:20px; padding:15px; background:#f8f9fa; border-radius:8px;">
+            </div>
+            <h3 style="font-size:16px; margin-bottom:15px; color:#2c3e50;">🔐 Change Password</h3>
+            <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Current password">
+            </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" placeholder="New password">
+            </div>
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm new password">
+            </div>
+            <div id="profileMessage" class="message" style="display:none;"></div>
+            <button onclick="submitChangePassword()" class="btn-submit" style="background:#1a73e8;">
+                🔐 Change Password
+            </button>
         </div>
     </div>
 

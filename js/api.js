@@ -113,3 +113,6 @@ const api = {
     addSetting: (data) => fetchAPI("POST", "/settings/", data),
     deleteSetting: (id) => fetchAPI("DELETE", `/settings/${id}`),
 };
+
+
+changePassword: (data) => fetchAPI("PUT", "/auth/change-password", data)

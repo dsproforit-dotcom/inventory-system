@@ -209,4 +209,5 @@ window.addEventListener('click', function (event) {
     if (event.target === document.getElementById('transferModal')) closeTransferModal();
     if (event.target === document.getElementById('editModal')) closeEditModal();
     if (event.target === document.getElementById('qrModal')) closeQrModal();
+    if (event.target === document.getElementById('profileModal')) closeProfileModal();
 });
