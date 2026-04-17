@@ -53,25 +53,30 @@
 
         <div style="text-align:center; margin-bottom:10px; position:relative; padding:10px 0;">
         
-            <div style="position:absolute; left:10px; top:10px; display:flex; gap:8px; align-items:center;">
-                <button onclick="handleLogout()"
-                    style="background:#dc3545; border:none; font-size:13px; padding:6px 12px; border-radius:8px; cursor:pointer; color:white; min-width:unset; flex:none;">🚪
-                    Logout</button>
-                <button onclick="openProfileModal()"
-                    style="background:#6c757d; border:none; font-size:13px; padding:6px 12px; border-radius:8px; cursor:pointer; color:white; min-width:unset; flex:none;">👤
-                    Profile</button>
-                <a id="adminLink" href="admin.html"
-                    style="display:none; background:#6f42c1; font-size:13px; padding:6px 12px; border-radius:8px; color:white; text-decoration:none;">⚙️
-                    Admin</a>
+            <div style="text-align:center; margin-bottom:10px; padding:10px;">
+            
+                <!-- ღილაკები — ზედა ზოლი -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div style="display:flex; gap:6px;">
+                        <button onclick="handleLogout()"
+                            style="background:#dc3545; border:none; font-size:13px; padding:6px 12px; border-radius:8px; cursor:pointer; color:white; min-width:unset; flex:none;">🚪
+                            Logout</button>
+                        <button onclick="openProfileModal()"
+                            style="background:#6c757d; border:none; font-size:13px; padding:6px 12px; border-radius:8px; cursor:pointer; color:white; min-width:unset; flex:none;">👤
+                            Profile</button>
+                        <a id="adminLink" href="admin.html"
+                            style="display:none; background:#6f42c1; font-size:13px; padding:6px 12px; border-radius:8px; color:white; text-decoration:none;">⚙️
+                            Admin</a>
+                    </div>
+                    <button id="themeToggle" onclick="toggleTheme()"
+                        style="background:none; border:none; font-size:26px; cursor:pointer; color:inherit; min-width:unset; flex:none;">🌙</button>
+                </div>
+            
+                <!-- ლოგო და სათაური -->
+                <img src="https://i.ibb.co/LzkKyQFh/logo.png" alt="Logo" style="max-height:50px;">
+                <h1>IT Inventory System</h1>
+                <div id="userDisplay" style="color:#7f8c8d; font-size:13px; margin-top:-10px;"></div>
             </div>
-        
-            <button id="themeToggle" onclick="toggleTheme()"
-                style="position:absolute; right:10px; top:10px; background:none; border:none; font-size:26px; cursor:pointer; color:inherit; min-width:unset; flex:none;">🌙</button>
-        
-            <img src="https://i.ibb.co/LzkKyQFh/logo.png" alt="Logo" style="max-height:50px;">
-            <h1>IT Inventory System</h1>
-            <div id="userDisplay" style="color:#7f8c8d; font-size:13px; margin-top:-10px;"></div>
-        </div>
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('dashboard')" id="btn-dashboard">📊 Dashboard</button>
