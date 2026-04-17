@@ -90,3 +90,7 @@ function isManager() {
     const user = getCurrentUser();
     return user && ['admin', 'manager'].includes(user.role);
 }
+
+function showLoginPage() {
+    window.location.href = 'index.html';
+}
