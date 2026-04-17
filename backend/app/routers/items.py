@@ -104,10 +104,12 @@ async def create_item(
     # ID-ის გენერირება თუ არ არის მითითებული
     item_id = data.item_id or str(uuid.uuid4()).split('-')[0].upper()
 
-    # შევამოწმოთ ID უნიკალურია
-    result = await db.execute(select(Item).where(Item.item_id == item_id))
+    # შევამოწმოთ ID უნიკალურია+ლოკაცია ერთად
+    result = await db.execute(
+        select(Item).where(Item.item_id == item_id, Item.location == data.location)
+    )
     if result.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail=f"Item ID '{item_id}' already exists")
+        raise HTTPException(status_code=400, detail=f"Item ID '{item_id}' already exists at '{data.location}'")
 
     item = Item(
         item_id=item_id,

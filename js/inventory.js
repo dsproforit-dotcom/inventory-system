@@ -218,11 +218,10 @@ async function importExcel(input) {
             let failed = 0;
             let errors = [];
 
-            showMessage(`⏳ Importing ${rows.length} items...`, 'loading');
+            showMessage(`⏳ Importing 0 / ${rows.length} items...`, 'loading');
 
             for (const row of rows) {
                 try {
-                    // სვეტების mapping — Sheets-ის სტრუქტურა
                     const payload = {
                         item_id: String(row['Item ID'] || '').trim() || null,
                         name: String(row['Name'] || '').trim(),
@@ -233,7 +232,6 @@ async function importExcel(input) {
                         notes: String(row['Notes'] || '').trim() || null
                     };
 
-                    // სახელი სავალდებულოა
                     if (!payload.name) {
                         failed++;
                         continue;
@@ -245,6 +243,9 @@ async function importExcel(input) {
                     failed++;
                     errors.push(row['Name'] || 'Unknown');
                 }
+
+                // progress განახლება
+                showMessage(`⏳ Importing ${success + failed} / ${rows.length} items...`, 'loading');
             }
 
             // input გასუფთავება
@@ -275,7 +276,7 @@ async function deleteSelected() {
     let success = 0;
     let failed = 0;
 
-    showMessage(`⏳ Deleting ${checked.length} items...`, 'loading');
+    showMessage(`⏳ Deleting 0 / ${checked.length} items...`, 'loading');
 
     for (const cb of checked) {
         const item = currentResults[parseInt(cb.value)];
@@ -285,6 +286,7 @@ async function deleteSelected() {
         } catch (e) {
             failed++;
         }
+        showMessage(`⏳ Deleting ${success + failed} / ${checked.length} items...`, 'loading');
     }
 
     showMessage(
