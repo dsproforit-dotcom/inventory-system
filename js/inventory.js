@@ -103,7 +103,7 @@ function displayResults(results) {
         return;
     }
 
-    if (messageDiv) {
+    if (messageDiv && messageDiv.className !== 'message loading') {
         messageDiv.innerHTML = `✅ Found ${results.length} items`;
         messageDiv.className = 'message success';
         messageDiv.style.display = 'block';
