@@ -250,15 +250,17 @@ async function importExcel(input) {
 
             // input გასუფთავება
             input.value = '';
+            
+            await fetchFullInventory();
+            loadDashboardData();
+            fullHistoryData = [];
 
             showMessage(
                 `✅ Import complete! Success: ${success}, Failed: ${failed}`,
                 failed > 0 ? 'error' : 'success'
             );
 
-            await fetchFullInventory();
-            loadDashboardData();
-            fullHistoryData = [];
+            
 
         } catch (e) {
             alert('Error reading file: ' + e.message);
@@ -289,14 +291,16 @@ async function deleteSelected() {
         showMessage(`⏳ Deleting ${success + failed} / ${checked.length} items...`, 'loading');
     }
 
+    await fetchFullInventory();
+    loadDashboardData();
+    fullHistoryData = [];
+
     showMessage(
         `✅ Deleted: ${success}, Failed: ${failed}`,
         failed > 0 ? 'error' : 'success'
     );
 
-    await fetchFullInventory();
-    loadDashboardData();
-    fullHistoryData = [];
+    
 }
 
 

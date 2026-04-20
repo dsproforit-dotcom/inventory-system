@@ -44,10 +44,11 @@ async function submitNewItem() {
         btn.innerText = "Save Item";
         btn.disabled = false;
         closeModal();
-        showMessage(`✅ ${response.message}`, 'success');
         await fetchFullInventory();
         loadDashboardData();
         fullHistoryData = [];
+        showMessage(`✅ ${response.message}`, 'success');
+        
     } catch (e) {
         btn.innerText = "Save Item";
         btn.disabled = false;
@@ -102,10 +103,11 @@ async function submitEditItem() {
         btn.innerText = "💾 Save Changes";
         btn.disabled = false;
         closeEditModal();
-        showMessage(`✅ ${response.message}`, 'success');
         await fetchFullInventory();
         loadDashboardData();
         fullHistoryData = [];
+        showMessage(`✅ ${response.message}`, 'success');
+        
     } catch (e) {
         btn.innerText = "💾 Save Changes";
         btn.disabled = false;
@@ -127,10 +129,11 @@ async function deleteItem() {
         btn.innerText = "🗑️ Delete";
         btn.disabled = false;
         closeEditModal();
-        showMessage(`✅ ${response.message}`, 'success');
         await fetchFullInventory();
         loadDashboardData();
         fullHistoryData = [];
+        showMessage(`✅ ${response.message}`, 'success');
+        
     } catch (e) {
         btn.innerText = "🗑️ Delete";
         btn.disabled = false;
@@ -192,10 +195,11 @@ async function submitTransfer() {
         btn.innerText = "Execute Action";
         btn.disabled = false;
         closeTransferModal();
-        showMessage(`✅ ${response.message}`, 'success');
         await fetchFullInventory();
         loadDashboardData();
         fullHistoryData = [];
+        showMessage(`✅ ${response.message}`, 'success');
+        
     } catch (e) {
         btn.innerText = "Execute Action";
         btn.disabled = false;
