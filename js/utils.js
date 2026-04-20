@@ -29,7 +29,11 @@ function showMessage(text, type) {
     msg.style.display = 'block';
     msg.className = 'message ' + type;
     msg.innerText = text;
-    setTimeout(() => msg.style.display = 'none', 4000);
+
+    // timeout მხოლოდ success/error-ზე, არა loading-ზე
+    if (type !== 'loading') {
+        setTimeout(() => msg.style.display = 'none', 4000);
+    }
 }
 
 // შეცდომის ჩვენება
