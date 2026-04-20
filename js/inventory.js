@@ -2,9 +2,9 @@
 // 📦 INVENTORY — ნივთების სია და ფილტრაცია
 // =========================================================
 
-async function fetchFullInventory() {
+async function fetchFullInventory(silent = false) {
     const messageDiv = document.getElementById('message');
-    if (messageDiv) {
+    if (messageDiv && !silent) {
         messageDiv.style.display = 'block';
         messageDiv.className = 'message loading';
         messageDiv.innerText = '⏳ Loading Database...';
@@ -251,7 +251,7 @@ async function importExcel(input) {
             // input გასუფთავება
             input.value = '';
             
-            await fetchFullInventory();
+            await fetchFullInventory(true);
             loadDashboardData();
             fullHistoryData = [];
 
@@ -291,7 +291,7 @@ async function deleteSelected() {
         showMessage(`⏳ Deleting ${success + failed} / ${checked.length} items...`, 'loading');
     }
 
-    await fetchFullInventory();
+    await fetchFullInventory(true);
     loadDashboardData();
     fullHistoryData = [];
 
