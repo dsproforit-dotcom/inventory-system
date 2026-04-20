@@ -14,7 +14,7 @@ async function fetchFullInventory(silent = false) {
         const data = await api.getItems();
         if (!data) return;
         fullInventoryData = data.items;
-        search();
+        search(silent);
     } catch (e) {
         displayError(e);
     }
@@ -57,7 +57,7 @@ function populateDropdowns() {
     });
 }
 
-function search() {
+function search(silent = false) {
     const q = (document.getElementById('search')?.value || '').toLowerCase().trim();
     const cat = document.getElementById('filterCategory')?.value || '';
     const loc = document.getElementById('filterLocation')?.value || '';
@@ -85,16 +85,16 @@ function search() {
         return matchQ && matchCat && matchLoc && matchDate;
     });
 
-    displayResults(results);
+    displayResults(results, silent);
 }
 
-function displayResults(results) {
+function displayResults(results, silent = false) {
     currentResults = results;
     const messageDiv = document.getElementById('message');
     const tbody = document.getElementById('resultsBody');
 
     if (!results || results.length === 0) {
-        if (messageDiv) {
+        if (messageDiv && !silent) {
             messageDiv.innerHTML = '🔍 No items match these filters';
             messageDiv.className = 'message error';
             messageDiv.style.display = 'block';
@@ -103,7 +103,7 @@ function displayResults(results) {
         return;
     }
 
-    if (messageDiv && messageDiv.className !== 'message loading') {
+    if (messageDiv && !silent) {
         messageDiv.innerHTML = `✅ Found ${results.length} items`;
         messageDiv.className = 'message success';
         messageDiv.style.display = 'block';
