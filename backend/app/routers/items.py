@@ -164,34 +164,43 @@ async def get_item(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """ნივთის დეტალები ID-ით"""
+    """ნივთის დეტალები ID-ით (ყველა ლოკაცია)"""
     result = await db.execute(select(Item).where(Item.item_id == item_id))
-    item = result.scalar_one_or_none()
-    if not item:
+    items = result.scalars().all()
+    if not items:
         raise HTTPException(status_code=404, detail="Item not found")
 
     return {
-        "id": str(item.id),
-        "item_id": item.item_id,
-        "name": item.name,
-        "category": item.category,
-        "quantity": item.quantity,
-        "location": item.location,
-        "picture_url": item.picture_url,
-        "notes": item.notes,
-        "created_at": item.created_at
+        "item_id": item_id,
+        "name": items[0].name,
+        "category": items[0].category,
+        "picture_url": items[0].picture_url,
+        "notes": items[0].notes,
+        "locations": [
+            {
+                "id": str(item.id),
+                "location": item.location,
+                "quantity": item.quantity,
+                "created_at": item.created_at
+            }
+            for item in items
+        ]
     }
 
 @router.put("/{item_id}")
 async def update_item(
     item_id: str,
     data: ItemUpdate,
+    location: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_manager)
 ):
-    """ნივთის განახლება"""
-    result = await db.execute(select(Item).where(Item.item_id == item_id))
-    item = result.scalar_one_or_none()
+    """ნივთის განახლება (location query param-ით კონკრეტული ჩანაწერი)"""
+    query = select(Item).where(Item.item_id == item_id)
+    if location:
+        query = query.where(Item.location == location)
+    result = await db.execute(query)
+    item = result.scalars().first()
     if not item:
         history = History(
             item_id=item_id,

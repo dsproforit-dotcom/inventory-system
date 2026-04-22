@@ -99,7 +99,7 @@ async function submitEditItem() {
     btn.disabled = true;
 
     try {
-        const response = await api.updateItem(currentEditItem.item_id, payload);
+        const response = await api.updateItem(currentEditItem.item_id, currentEditItem.location, payload);
         btn.innerText = "💾 Save Changes";
         btn.disabled = false;
         closeEditModal();

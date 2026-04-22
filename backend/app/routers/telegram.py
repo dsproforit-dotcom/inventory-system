@@ -183,7 +183,9 @@ async def handle_command(text: str, chat_id: str):
                 select(History).order_by(History.created_at.desc())
             )
             records = result.scalars().all()
-            found = [r for r in records if r.created_at.date() == today][:20]
+            found = [r for r in records if (
+                r.created_at.replace(tzinfo=timezone.utc) if r.created_at.tzinfo is None else r.created_at
+            ).date() == today][:20]
             if not found:
                 reply = "📭 No operations today yet."
             else:

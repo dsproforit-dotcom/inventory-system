@@ -149,15 +149,26 @@ async function initApp() {
 // =========================================================
 // 🎯 APP START
 // =========================================================
-window.onload = function () {
+window.onload = async function () {
     // login form
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
 
-    // token შემოწმება
+    // token შემოწმება — backend-ზე ვალიდაცია
     const token = getToken();
     if (token) {
-        showMainApp();
-        initApp();
+        try {
+            const me = await api.me();
+            if (me) {
+                setCurrentUser(me);
+                showMainApp();
+                initApp();
+            } else {
+                showLoginPage();
+            }
+        } catch (e) {
+            removeToken();
+            showLoginPage();
+        }
     } else {
         showLoginPage();
     }

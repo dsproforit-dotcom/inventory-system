@@ -16,7 +16,6 @@ class UserRegister(BaseModel):
     email: str
     full_name: str
     password: str
-    role: str = "viewer"
 
 class Token(BaseModel):
     access_token: str
@@ -60,19 +59,28 @@ async def require_manager(current_user: User = Depends(get_current_user)):
 
 # --- Routes ---
 @router.post("/register", status_code=201)
-async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
-    """ახალი მომხმარებლის რეგისტრაცია"""
+async def register(
+    data: UserRegister,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    """ახალი მომხმარებლის რეგისტრაცია (მხოლოდ admin)"""
     # შევამოწმოთ username უკვე ხომ არ არსებობს
     result = await db.execute(select(User).where(User.username == data.username))
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Username already exists")
-    
+
+    # შევამოწმოთ email უკვე ხომ არ არსებობს
+    result = await db.execute(select(User).where(User.email == data.email))
+    if result.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Email already exists")
+
     user = User(
         username=data.username,
         email=data.email,
         full_name=data.full_name,
         hashed_password=hash_password(data.password),
-        role=data.role
+        role="viewer"
     )
     db.add(user)
     await db.commit()
