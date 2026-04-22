@@ -7,7 +7,7 @@ async function fetchFullInventory(silent = false) {
     if (messageDiv && !silent) {
         messageDiv.style.display = 'block';
         messageDiv.className = 'message loading';
-        messageDiv.innerText = '⏳ Loading Database...';
+        messageDiv.innerText = '⏳ Loading Inventory...';
     }
 
     try {
