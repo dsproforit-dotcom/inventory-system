@@ -14,7 +14,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 class UserRegister(BaseModel):
     username: str
     email: str
-    full_name: str
     password: str
     role: str = "viewer"
 
@@ -82,7 +81,6 @@ async def register(
     user = User(
         username=data.username,
         email=data.email,
-        full_name=data.full_name,
         hashed_password=hash_password(data.password),
         role=data.role
     )
@@ -108,13 +106,12 @@ async def login(
         )
     
     token = create_access_token({"sub": user.username})
-    
+
     return {
         "access_token": token,
         "token_type": "bearer",
         "user": {
             "username": user.username,
-            "full_name": user.full_name,
             "role": user.role
         }
     }
@@ -135,7 +132,6 @@ async def get_me(current_user: User = Depends(get_current_user)):
     return {
         "username": current_user.username,
         "email": current_user.email,
-        "full_name": current_user.full_name,
         "role": current_user.role
     }
 

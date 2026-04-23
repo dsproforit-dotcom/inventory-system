@@ -23,7 +23,6 @@ async def get_users(
     return [
         {
             "username": u.username,
-            "full_name": u.full_name,
             "email": u.email,
             "role": u.role,
             "is_active": u.is_active,

@@ -29,7 +29,7 @@ window.onload = async function () {
 
         // admin-ია — პანელი გავხსნათ
         document.getElementById('adminApp').style.display = 'block';
-        document.getElementById('adminUserDisplay').innerText = `👤 ${me.full_name} (${me.role})`;
+        document.getElementById('adminUserDisplay').innerText = `👤 ${me.username} (${me.role})`;
 
         await loadUsers();
         await loadSettings();
@@ -81,7 +81,6 @@ function drawUsersTable(users) {
 
         html += `<tr>
             <td data-label="Username"><strong>${escapeHtml(u.username)}</strong></td>
-            <td data-label="Full Name">${escapeHtml(u.full_name)}</td>
             <td data-label="Role">
                 <select onchange="changeRole('${u.username}', this.value)" ${isSelf ? 'disabled' : ''}>
                     <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>Viewer</option>
@@ -118,24 +117,22 @@ function drawUsersTable(users) {
 
 async function createUser() {
     const username = document.getElementById('newUsername').value.trim();
-    const fullName = document.getElementById('newFullName').value.trim();
     const password = document.getElementById('newPassword').value.trim();
     const role = document.getElementById('newRole').value;
 
-    if (!username || !fullName || !password) {
+    if (!username || !password) {
         return alert('Please fill all required fields!');
     }
 
     try {
         await fetchAPI('POST', '/auth/register', {
             username,
-            full_name: fullName,
             email: username + '@inventory.local',
             password,
             role
         });
         showAdminMessage('✅ User created successfully!', 'success');
-        ['newUsername', 'newFullName', 'newPassword'].forEach(id => {
+        ['newUsername', 'newPassword'].forEach(id => {
             document.getElementById(id).value = '';
         });
         await loadUsers();

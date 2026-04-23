@@ -109,7 +109,7 @@ async function initApp() {
     // მომხმარებლის სახელი header-ში
     const user = getCurrentUser();
     if (user) {
-        document.getElementById('userDisplay').innerText = `👤 ${user.full_name} (${user.role})`;
+        document.getElementById('userDisplay').innerText = `👤 ${user.username} (${user.role})`;
     }
 
     // როლის მიხედვით ღილაკების მართვა
@@ -184,7 +184,6 @@ function openProfileModal() {
     if (user) {
         document.getElementById('profileInfo').innerHTML = `
             <p><strong>👤 Username:</strong> ${user.username}</p>
-            <p><strong>📝 Full Name:</strong> ${user.full_name}</p>
             <p><strong>🎭 Role:</strong> ${user.role}</p>
         `;
     }
