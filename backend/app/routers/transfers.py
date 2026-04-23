@@ -46,7 +46,7 @@ async def execute_transfer(
             from_location=data.from_location,
             to_location="N/A",
             quantity=data.quantity,
-            responsible=current_user.full_name,
+            responsible=current_user.username,
             comment=f"Item not found at '{data.from_location}'"
         )
         db.add(history)
@@ -66,7 +66,7 @@ async def execute_transfer(
             from_location="SUPPLIER",
             to_location=data.from_location,
             quantity=data.quantity,
-            responsible=current_user.full_name,
+            responsible=current_user.username,
             comment=data.notes or ""
         )
         db.add(history)
@@ -76,7 +76,7 @@ async def execute_transfer(
             f"📦 <b>{item.name}</b> [{item.item_id}]\n"
             f"📍 Location: {data.from_location}\n"
             f"🔢 Added: {data.quantity}\n"
-            f"👤 By: {current_user.full_name}"
+            f"👤 By: {current_user.username}"
         )
         return {"message": f"Restocked {data.quantity} units. New quantity: {item.quantity}"}
 
@@ -89,7 +89,7 @@ async def execute_transfer(
             from_location=data.from_location,
             to_location="N/A",
             quantity=data.quantity,
-            responsible=current_user.full_name,
+            responsible=current_user.username,
             comment=f"Insufficient stock. Available: {item.quantity}, Requested: {data.quantity}"
         )
         db.add(history)
@@ -108,7 +108,7 @@ async def execute_transfer(
                 from_location=data.from_location,
                 to_location="N/A",
                 quantity=data.quantity,
-                responsible=current_user.full_name,
+                responsible=current_user.username,
                 comment="TRANSFER failed: to_location not specified"
             )
             db.add(history)
@@ -122,7 +122,7 @@ async def execute_transfer(
                 from_location=data.from_location,
                 to_location=data.to_location,
                 quantity=data.quantity,
-                responsible=current_user.full_name,
+                responsible=current_user.username,
                 comment="TRANSFER failed: same location"
             )
             db.add(history)
@@ -166,7 +166,7 @@ async def execute_transfer(
             from_location=data.from_location,
             to_location="N/A",
             quantity=data.quantity,
-            responsible=current_user.full_name,
+            responsible=current_user.username,
             comment=f"Unknown action: {action}"
         )
         db.add(history)
@@ -181,7 +181,7 @@ async def execute_transfer(
         from_location=data.from_location,
         to_location=to_loc,
         quantity=data.quantity,
-        responsible=current_user.full_name,
+        responsible=current_user.username,
         comment=data.notes or ""
     )
     db.add(history)
@@ -193,6 +193,6 @@ async def execute_transfer(
         f"📦 <b>{item.name}</b> [{item.item_id}]\n"
         f"📍 {data.from_location}{f' ➔ {to_loc}' if action == 'TRANSFER' else ''}\n"
         f"🔢 Quantity: {data.quantity}\n"
-        f"👤 By: {current_user.full_name}"
+        f"👤 By: {current_user.username}"
     )
     return {"message": f"Action '{action}' completed successfully"}

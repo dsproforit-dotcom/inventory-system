@@ -112,7 +112,7 @@ async def create_item(
             from_location="N/A",
             to_location=data.location,
             quantity=data.quantity,
-            responsible=current_user.full_name,
+            responsible=current_user.username,
             comment=f"Already exists at '{data.location}'"
         )
         db.add(history)
@@ -137,7 +137,7 @@ async def create_item(
         from_location="N/A",
         to_location=data.location,
         quantity=data.quantity,
-        responsible=current_user.full_name,
+        responsible=current_user.username,
         comment=data.notes or ""
     )
     db.add(history)
@@ -148,7 +148,7 @@ async def create_item(
         f"📦 <b>{data.name}</b> [{item_id}]\n"
         f"📍 Location: {data.location}\n"
         f"🔢 Quantity: {data.quantity}\n"
-        f"👤 By: {current_user.full_name}"
+        f"👤 By: {current_user.username}"
     )
 
     return {"message": f"Item '{data.name}' created successfully", "item_id": item_id}
@@ -203,7 +203,7 @@ async def update_item(
             from_location="N/A",
             to_location="N/A",
             quantity=0,
-            responsible=current_user.full_name,
+            responsible=current_user.username,
             comment=f"Update failed: Item '{item_id}' not found"
         )
         db.add(history)
@@ -226,7 +226,7 @@ async def update_item(
         from_location=old_location,
         to_location=data.location,
         quantity=data.quantity,
-        responsible=current_user.full_name,
+        responsible=current_user.username,
         comment="Updated via API"
     )
     db.add(history)
@@ -238,7 +238,7 @@ async def update_item(
         f"📦 <b>{data.name}</b> [{item_id}]\n"
         f"📍 Location: {data.location}\n"
         f"🔢 Quantity: {data.quantity}\n"
-        f"👤 By: {current_user.full_name}"
+        f"👤 By: {current_user.username}"
     )
     return {"message": f"Item '{item_id}' updated successfully"}
 
@@ -268,7 +268,7 @@ async def delete_item(
             from_location=location or "N/A",
             to_location="N/A",
             quantity=0,
-            responsible=current_user.full_name,
+            responsible=current_user.username,
             comment=f"Delete failed: Item '{item_id}' not found at '{location}'"
         )
         db.add(history)
@@ -283,7 +283,7 @@ async def delete_item(
             from_location=item.location,
             to_location="DELETED",
             quantity=item.quantity,
-            responsible=current_user.full_name,
+            responsible=current_user.username,
             comment="Deleted via API"
         )
         db.add(history)
@@ -295,6 +295,6 @@ async def delete_item(
         f"🗑️ <b>ITEM DELETED</b>\n"
         f"📦 <b>{items_to_delete[0].name}</b> [{item_id}]\n"
         f"📍 Location: {location or 'ALL'}\n"
-        f"👤 By: {current_user.full_name}"
+        f"👤 By: {current_user.username}"
     )
     return {"message": f"Item '{item_id}' deleted successfully"}
