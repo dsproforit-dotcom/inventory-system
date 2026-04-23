@@ -111,9 +111,6 @@ function displayResults(results, silent = false) {
 
     let html = '';
     results.forEach((item, index) => {
-        const photoHtml = (item.picture_url && item.picture_url.startsWith('http'))
-            ? `<a href="${item.picture_url}" target="_blank">🖼️</a>` : '-';
-
         html += `<tr>
       <td data-label="Select"><input type="checkbox" class="row-select" value="${index}" style="width:16px;height:16px;"></td>
       <td data-label="ID"><strong>${escapeHtml(item.item_id)}</strong></td>
@@ -121,7 +118,6 @@ function displayResults(results, silent = false) {
       <td data-label="Category">${escapeHtml(item.category)}</td>
       <td data-label="Qty">${item.quantity}</td>
       <td data-label="Location">${escapeHtml(item.location)}</td>
-      <td data-label="Pic">${photoHtml}</td>
       <td data-label="Note">${escapeHtml(item.notes) || '-'}</td>
       <td data-label="Action">
         <div style="display:flex;gap:4px;">
@@ -169,10 +165,10 @@ function downloadCSV() {
         ? checked.map(cb => currentResults[parseInt(cb.value)])
         : currentResults;
 
-    let csvContent = "\ufeffID,Name,Category,Qty,Location,Picture,Notes,Created\n";
+    let csvContent = "\ufeffID,Name,Category,Qty,Location,Notes,Created\n";
     dataToExport.forEach(item => {
         const row = [item.item_id, item.name, item.category, item.quantity,
-        item.location, item.picture_url || '', item.notes || '', item.created_at]
+        item.location, item.notes || '', item.created_at]
             .map(cell => `"${String(cell).replace(/"/g, '""')}"`);
         csvContent += row.join(",") + "\n";
     });
@@ -228,7 +224,6 @@ async function importExcel(input) {
                         category: String(row['Category'] || '').trim(),
                         quantity: parseInt(row['Quantity'] || row['Qty'] || 0),
                         location: String(row['Location'] || '').trim(),
-                        picture_url: String(row['Picture'] || '').trim() || null,
                         notes: String(row['Notes'] || '').trim() || null
                     };
 
@@ -312,7 +307,6 @@ function downloadExcelTemplate() {
             'Category': 'Example: Networking Gear',
             'Quantity': 5,
             'Location': 'Example: IT Warehouse',
-            'Picture': 'https://... (optional)',
             'Notes': 'Any notes (optional)'
         }
     ];
