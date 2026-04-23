@@ -42,7 +42,10 @@
                 </div>
                 <div class="filter-group">
                     <label>Password *</label>
-                    <input type="password" id="newPassword" placeholder="password">
+                    <div style="display:flex; gap:5px;">
+                        <input type="password" id="newPassword" placeholder="password" style="flex:1;">
+                        <button type="button" onclick="togglePassword('newPassword', this)" style="flex:none; width:42px; height:42px; padding:0; min-width:unset; background:#6c757d; border-radius:8px; font-size:16px;">👁️</button>
+                    </div>
                 </div>
                 <div class="filter-group">
                     <label>Role</label>

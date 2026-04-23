@@ -87,6 +87,18 @@ function formatDate(dateStr) {
     return d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
+// პაროლის ჩვენება/დამალვა
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerText = '🙈';
+    } else {
+        input.type = 'password';
+        btn.innerText = '👁️';
+    }
+}
+
 // როლის შემოწმება
 function isAdmin() {
     const user = getCurrentUser();

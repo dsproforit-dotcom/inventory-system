@@ -36,7 +36,10 @@
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter password" required>
+                    <div style="display:flex; gap:5px;">
+                        <input type="password" id="loginPassword" placeholder="Enter password" required style="flex:1;">
+                        <button type="button" onclick="togglePassword('loginPassword', this)" style="flex:none; width:42px; height:42px; padding:0; min-width:unset; background:#6c757d; border-radius:8px; font-size:16px;">👁️</button>
+                    </div>
                 </div>
                 <div id="loginError"
                     style="display:none; background:#fce8e8; color:#c5221f; padding:10px; border-radius:8px; margin-bottom:15px; font-size:14px;">
@@ -424,15 +427,24 @@
             <h3 style="font-size:16px; margin-bottom:15px; color:#2c3e50;">🔐 Change Password</h3>
             <div class="form-group">
                 <label>Current Password</label>
-                <input type="password" id="currentPassword" placeholder="Current password">
+                <div style="display:flex; gap:5px;">
+                    <input type="password" id="currentPassword" placeholder="Current password" style="flex:1;">
+                    <button type="button" onclick="togglePassword('currentPassword', this)" style="flex:none; width:42px; height:42px; padding:0; min-width:unset; background:#6c757d; border-radius:8px; font-size:16px;">👁️</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>New Password</label>
-                <input type="password" id="newPassword" placeholder="New password">
+                <div style="display:flex; gap:5px;">
+                    <input type="password" id="newPassword" placeholder="New password" style="flex:1;">
+                    <button type="button" onclick="togglePassword('newPassword', this)" style="flex:none; width:42px; height:42px; padding:0; min-width:unset; background:#6c757d; border-radius:8px; font-size:16px;">👁️</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>Confirm New Password</label>
-                <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                <div style="display:flex; gap:5px;">
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password" style="flex:1;">
+                    <button type="button" onclick="togglePassword('confirmPassword', this)" style="flex:none; width:42px; height:42px; padding:0; min-width:unset; background:#6c757d; border-radius:8px; font-size:16px;">👁️</button>
+                </div>
             </div>
             <div id="profileMessage" class="message" style="display:none;"></div>
             <button onclick="submitChangePassword()" class="btn-submit" style="background:#1a73e8;">
