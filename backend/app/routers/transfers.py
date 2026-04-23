@@ -147,6 +147,7 @@ async def execute_transfer(
                 category=item.category,
                 quantity=data.quantity,
                 location=data.to_location,
+                picture_url=item.picture_url,
                 notes=item.notes
             )
             db.add(new_item)
