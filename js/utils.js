@@ -42,15 +42,18 @@ function displayError(e) {
 }
 
 // ცხრილის სორტირება
+const sortColumnMap = { 1: 'name', 2: 'category', 3: 'quantity', 4: 'location' };
 let sortDirection = true;
 function sortTable(columnIndex) {
     if (currentResults.length === 0) return;
+    const key = sortColumnMap[columnIndex];
+    if (!key) return;
     sortDirection = !sortDirection;
     currentResults.sort((a, b) => {
-        let valA = a[columnIndex], valB = b[columnIndex];
-        if (!isNaN(valA) && !isNaN(valB)) return sortDirection ? valA - valB : valB - valA;
-        valA = String(valA).toLowerCase();
-        valB = String(valB).toLowerCase();
+        let valA = a[key], valB = b[key];
+        if (typeof valA === 'number' && typeof valB === 'number') return sortDirection ? valA - valB : valB - valA;
+        valA = String(valA ?? '').toLowerCase();
+        valB = String(valB ?? '').toLowerCase();
         return sortDirection ? (valA < valB ? -1 : 1) : (valA < valB ? 1 : -1);
     });
     displayResults(currentResults);
