@@ -89,7 +89,7 @@ async def login(
     db: AsyncSession = Depends(get_db)
 ):
     """login და token-ის მიღება"""
-    result = await db.execute(select(User).where(User.username == form_data.username))
+    result = await db.execute(select(User).where(User.username.ilike(form_data.username)))
     user = result.scalar_one_or_none()
     
     if not user or not verify_password(form_data.password, user.hashed_password):

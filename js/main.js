@@ -109,7 +109,8 @@ async function initApp() {
     // მომხმარებლის სახელი header-ში
     const user = getCurrentUser();
     if (user) {
-        document.getElementById('userDisplay').innerText = `👤 ${user.username} (${user.role})`;
+        const displayName = user.username.charAt(0).toUpperCase() + user.username.slice(1);
+        document.getElementById('userDisplay').innerText = `👤 ${displayName} (${user.role})`;
     }
 
     // როლის მიხედვით ღილაკების მართვა
