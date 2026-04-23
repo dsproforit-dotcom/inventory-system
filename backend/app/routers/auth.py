@@ -119,6 +119,16 @@ async def login(
         }
     }
 
+@router.get("/users")
+async def get_usernames(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_manager)
+):
+    """იუზერების სია ჩამოსაშლელისთვის (manager+)"""
+    result = await db.execute(select(User).where(User.is_active == True))
+    users = result.scalars().all()
+    return [{"username": u.username} for u in users]
+
 @router.get("/me")
 async def get_me(current_user: User = Depends(get_current_user)):
     """მიმდინარე მომხმარებლის ინფო"""

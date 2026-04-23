@@ -7,9 +7,22 @@ async function loadHistoryData() {
     tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;" class="loading">⏳ Fetching Full History...</td></tr>';
 
     try {
-        const data = await api.getHistory({ limit: 200 });
-        if (!data) return;
-        fullHistoryData = data.history;
+        const [histData, usersData] = await Promise.all([
+            api.getHistory({ limit: 200 }),
+            api.getUsers()
+        ]);
+        if (!histData) return;
+        fullHistoryData = histData.history;
+
+        // User dropdown-ის populate
+        const select = document.getElementById('historyUser');
+        select.innerHTML = '<option value="ALL">All Users</option>';
+        if (usersData) {
+            usersData.forEach(u => {
+                select.add(new Option(u.username, u.username));
+            });
+        }
+
         searchHistory();
     } catch (e) {
         tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:red;">❌ Error: ${e.message}</td></tr>`;
@@ -20,6 +33,7 @@ function searchHistory() {
     const q = (document.getElementById('historySearch')?.value || '').toLowerCase().trim();
     const actionType = document.getElementById('historyAction')?.value || '';
     const dateFilter = document.getElementById('historyDate')?.value || '';
+    const userFilter = document.getElementById('historyUser')?.value || 'ALL';
 
     const searchTerms = q.split(' ').filter(t => t.length > 0);
     const now = new Date();
@@ -35,6 +49,7 @@ function searchHistory() {
 
         const matchQ = searchTerms.every(term => searchableText.includes(term));
         const matchAction = !actionType || actionType === 'ALL' || row.action === actionType;
+        const matchUser = userFilter === 'ALL' || row.responsible === userFilter;
 
         let matchDate = true;
         if (dateFilter && dateFilter !== 'ALL') {
@@ -43,7 +58,7 @@ function searchHistory() {
             else if (dateFilter === 'WEEK') matchDate = rowDate >= weekStart;
             else if (dateFilter === 'MONTH') matchDate = rowDate >= monthStart;
         }
-        return matchQ && matchAction && matchDate;
+        return matchQ && matchAction && matchDate && matchUser;
     });
 
     currentHistoryResults = results;
@@ -79,6 +94,7 @@ function clearHistoryFilters() {
     document.getElementById('historySearch').value = '';
     document.getElementById('historyAction').value = 'ALL';
     document.getElementById('historyDate').value = 'ALL';
+    document.getElementById('historyUser').value = 'ALL';
     searchHistory();
 }
 

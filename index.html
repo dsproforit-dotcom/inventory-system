@@ -233,6 +233,12 @@
                         <option value="MONTH">This Month</option>
                     </select>
                 </div>
+                <div class="filter-group">
+                    <label>User</label>
+                    <select id="historyUser" onchange="searchHistory()">
+                        <option value="ALL">All Users</option>
+                    </select>
+                </div>
                 <div class="button-group" style="grid-column: auto;">
                     <button onclick="clearHistoryFilters()" class="btn-clear"
                         style="flex:none; width:42px; height:42px; padding:0; min-width:unset; font-size:16px; margin-top:15px;">🗑️</button>
