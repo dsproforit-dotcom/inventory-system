@@ -21,6 +21,7 @@ class ItemCreate(BaseModel):
     category: str
     quantity: int
     location: str
+    picture_url: Optional[str] = None
     notes: Optional[str] = None
 
 class ItemUpdate(BaseModel):
@@ -28,6 +29,7 @@ class ItemUpdate(BaseModel):
     category: str
     quantity: int
     location: str
+    picture_url: Optional[str] = None
     notes: Optional[str] = None
 
 class ItemResponse(BaseModel):
@@ -37,6 +39,7 @@ class ItemResponse(BaseModel):
     category: str
     quantity: int
     location: str
+    picture_url: Optional[str]
     notes: Optional[str]
     created_at: datetime
 
@@ -83,6 +86,7 @@ async def get_items(
                 "category": item.category,
                 "quantity": item.quantity,
                 "location": item.location,
+                "picture_url": item.picture_url,
                 "notes": item.notes,
                 "created_at": item.created_at
             }
@@ -125,6 +129,7 @@ async def create_item(
         category=data.category,
         quantity=data.quantity,
         location=data.location,
+        picture_url=data.picture_url,
         notes=data.notes
     )
     db.add(item)
@@ -169,6 +174,7 @@ async def get_item(
         "item_id": item_id,
         "name": items[0].name,
         "category": items[0].category,
+        "picture_url": items[0].picture_url,
         "notes": items[0].notes,
         "locations": [
             {
@@ -216,6 +222,7 @@ async def update_item(
     item.category = data.category
     item.quantity = data.quantity
     item.location = data.location
+    item.picture_url = data.picture_url
     item.notes = data.notes
 
     # ისტორიაში ჩაწერა
