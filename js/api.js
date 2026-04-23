@@ -120,7 +120,7 @@ const api = {
     deleteSetting: (id) => fetchAPI("DELETE", `/settings/${id}`),
 
     changePassword: (data) => fetchAPI("PUT", "/auth/change-password", data),
-    getUsers: () => fetchAPI("GET", "/admin/users"),
+    getUsers: () => fetchAPI("GET", "/auth/users"),
 };
 
 
