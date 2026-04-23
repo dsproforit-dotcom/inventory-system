@@ -127,7 +127,6 @@ async function createUser() {
     try {
         await fetchAPI('POST', '/auth/register', {
             username,
-            email: username + '@inventory.local',
             password,
             role
         });

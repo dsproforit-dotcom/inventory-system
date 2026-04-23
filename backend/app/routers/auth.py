@@ -13,7 +13,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 # --- Schemas ---
 class UserRegister(BaseModel):
     username: str
-    email: str
     password: str
     role: str = "viewer"
 
@@ -70,17 +69,11 @@ async def register(
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Username already exists")
 
-    # შევამოწმოთ email უკვე ხომ არ არსებობს
-    result = await db.execute(select(User).where(User.email == data.email))
-    if result.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail="Email already exists")
-
     if data.role not in ["viewer", "manager", "admin"]:
         raise HTTPException(status_code=400, detail="Invalid role")
 
     user = User(
         username=data.username,
-        email=data.email,
         hashed_password=hash_password(data.password),
         role=data.role
     )
@@ -131,7 +124,6 @@ async def get_me(current_user: User = Depends(get_current_user)):
     """მიმდინარე მომხმარებლის ინფო"""
     return {
         "username": current_user.username,
-        "email": current_user.email,
         "role": current_user.role
     }
 
