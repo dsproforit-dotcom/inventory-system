@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from .core.config import settings
 from .core.database import engine, Base
 from .routers import auth, items, history, dashboard, transfers
@@ -23,11 +25,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+scheduler = AsyncIOScheduler(timezone="Asia/Tbilisi")
+
 # აპლიკაციის გაშვებისას ცხრილების შექმნა
 @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    scheduler.add_job(telegram.daily_low_stock_check, CronTrigger(hour=9, minute=0, timezone="Asia/Tbilisi"))
+    scheduler.start()
+
+@app.on_event("shutdown")
+async def shutdown():
+    scheduler.shutdown()
 
 @app.get("/")
 async def root():

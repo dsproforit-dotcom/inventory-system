@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from ..core.database import get_db
 from ..models.user import User
 from .auth import require_admin
+from ..core.security import hash_password
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -99,8 +100,6 @@ async def reset_password(
     current_user: User = Depends(require_admin)
 ):
     """მომხმარებლის პაროლის reset"""
-    from .auth import hash_password
-    
     result = await db.execute(select(User).where(User.username == username))
     user = result.scalar_one_or_none()
     if not user:

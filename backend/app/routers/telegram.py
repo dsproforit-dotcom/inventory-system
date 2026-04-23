@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from ..core.config import settings
 import httpx
+from sqlalchemy import select
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
@@ -25,6 +26,43 @@ async def send_telegram_message(text: str, chat_id: str = None):
                 "parse_mode": "HTML"
             }
         )
+
+# =========================================================
+# ⚠️ LOW STOCK — საერთო ლოგიკა
+# =========================================================
+async def build_low_stock_message(db) -> str | None:
+    """low stock შეტყობინების ტექსტი, None თუ ყველაფერი OK"""
+    from ..models.item import Item
+
+    result = await db.execute(select(Item))
+    items = result.scalars().all()
+
+    low_it = [i for i in items if i.category == "Consumables" and i.location == "IT Warehouse" and i.quantity <= 3]
+    low_floor = [i for i in items if i.category == "Consumables" and i.location == "Floor's Cabinet" and i.quantity <= 1]
+
+    if not low_it and not low_floor:
+        return None
+
+    msg = "⚠️ <b>Low Stock Alert</b>\n\n"
+    if low_it:
+        msg += "🏭 <b>IT Warehouse (≤3):</b>\n"
+        for i in low_it:
+            msg += f"  🔴 {i.name} — <b>{i.quantity}</b> left\n"
+        msg += "\n"
+    if low_floor:
+        msg += "🏢 <b>Floor's Cabinet (≤1):</b>\n"
+        for i in low_floor:
+            msg += f"  🔴 {i.name} — <b>{i.quantity}</b> left\n"
+    return msg
+
+async def daily_low_stock_check():
+    """ყოველდღე 09:00-ზე low stock შეტყობინება"""
+    from ..core.database import AsyncSessionLocal
+
+    async with AsyncSessionLocal() as db:
+        msg = await build_low_stock_message(db)
+        if msg:
+            await send_telegram_message("📅 <b>Daily Check</b>\n\n" + msg)
 
 # =========================================================
 # 🤖 WEBHOOK — ტელეგრამიდან შემოსული მოთხოვნები
@@ -98,24 +136,7 @@ async def handle_command(text: str, chat_id: str):
                         reply += f"   📍 {i.location} — Qty: <b>{i.quantity}</b>\n\n"
 
         elif command == "/low":
-            result = await db.execute(select(Item))
-            items = result.scalars().all()
-            low_it = [i for i in items if i.category == "Consumables" and i.location == "IT Warehouse" and i.quantity <= 3]
-            low_floor = [i for i in items if i.category == "Consumables" and i.location == "Floor's Cabinet" and i.quantity <= 1]
-
-            if not low_it and not low_floor:
-                reply = "✅ All stock levels are OK!"
-            else:
-                reply = "⚠️ <b>Low Stock Alert</b>\n\n"
-                if low_it:
-                    reply += "🏭 <b>IT Warehouse (≤3):</b>\n"
-                    for i in low_it:
-                        reply += f"  🔴 {i.name} — <b>{i.quantity}</b> left\n"
-                    reply += "\n"
-                if low_floor:
-                    reply += "🏢 <b>Floor's Cabinet (≤1):</b>\n"
-                    for i in low_floor:
-                        reply += f"  🔴 {i.name} — <b>{i.quantity}</b> left\n"
+            reply = await build_low_stock_message(db) or "✅ All stock levels are OK!"
 
         elif command == "/history":
             result = await db.execute(

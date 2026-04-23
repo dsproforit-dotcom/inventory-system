@@ -9,3 +9,4 @@ python-multipart
 httpx
 bcrypt==4.0.1
 pydantic-settings
+apscheduler
