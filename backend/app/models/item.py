@@ -14,7 +14,6 @@ class Item(Base):
     category = Column(String(100), nullable=False)
     quantity = Column(Integer, default=0)
     location = Column(String(100), nullable=False)
-    picture_url = Column(String(500), nullable=True)
     notes = Column(Text, nullable=True)
     
     # თარიღები

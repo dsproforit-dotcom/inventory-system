@@ -13,7 +13,7 @@ function openModal() {
 
 function closeModal() {
     document.getElementById('addModal').style.display = 'none';
-    ['addId', 'addName', 'addQty', 'addPic', 'addNotes'].forEach(id => {
+    ['addId', 'addName', 'addQty', 'addNotes'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
     });
@@ -32,7 +32,6 @@ async function submitNewItem() {
         category: document.getElementById('addCategory').value,
         quantity: parseInt(qty),
         location: document.getElementById('addLocation').value,
-        picture_url: document.getElementById('addPic').value.trim() || null,
         notes: document.getElementById('addNotes').value.trim() || null
     };
 
@@ -67,7 +66,6 @@ function openEditModalByIndex(index) {
     document.getElementById('editCategory').value = currentEditItem.category;
     document.getElementById('editQty').value = currentEditItem.quantity;
     document.getElementById('editLocation').value = currentEditItem.location;
-    document.getElementById('editPic').value = currentEditItem.picture_url || '';
     document.getElementById('editNotes').value = currentEditItem.notes || '';
     
     document.getElementById('editModal').style.display = 'block';
@@ -91,7 +89,6 @@ async function submitEditItem() {
         category: document.getElementById('editCategory').value,
         quantity: parseInt(qty),
         location: document.getElementById('editLocation').value,
-        picture_url: document.getElementById('editPic').value.trim() || null,
         notes: document.getElementById('editNotes').value.trim() || null
     };
 
