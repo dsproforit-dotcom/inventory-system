@@ -7,27 +7,36 @@
 // =========================================================
 window.onload = async function () {
     const token = getToken();
-    const user = getCurrentUser();
-
-    // token ან user არ არის — login-ზე გადამისამართება
-    if (!token || !user) {
+    if (!token) {
         window.location.href = 'index.html';
         return;
     }
 
-    // admin არ არის — access denied
-    if (user.role !== 'admin') {
-        document.getElementById('accessDenied').style.display = 'block';
-        return;
+    // backend-ზე token-ის ვალიდაცია
+    try {
+        const me = await api.me();
+        if (!me) {
+            window.location.href = 'index.html';
+            return;
+        }
+        setCurrentUser(me);
+
+        // admin არ არის — access denied
+        if (me.role !== 'admin') {
+            document.getElementById('accessDenied').style.display = 'block';
+            return;
+        }
+
+        // admin-ია — პანელი გავხსნათ
+        document.getElementById('adminApp').style.display = 'block';
+        document.getElementById('adminUserDisplay').innerText = `👤 ${me.full_name} (${me.role})`;
+
+        await loadUsers();
+        await loadSettings();
+    } catch (e) {
+        removeToken();
+        window.location.href = 'index.html';
     }
-
-    // admin-ია — პანელი გავხსნათ
-    document.getElementById('adminApp').style.display = 'block';
-    document.getElementById('adminUserDisplay').innerText = `👤 ${user.full_name} (${user.role})`;
-
-    // მონაცემები ჩავტვირთოთ
-    await loadUsers();
-    await loadSettings();
 };
 
 // =========================================================

@@ -53,14 +53,8 @@ function printQR() {
 }
 
 // =========================================================
-// ✅ SELECT ALL & PRINT SHEET
+// ✅ PRINT SHEET
 // =========================================================
-function toggleSelectAll(masterCheckbox) {
-    document.querySelectorAll('.row-select').forEach(cb => {
-        cb.checked = masterCheckbox.checked;
-    });
-}
-
 function printSelectedQR() {
     const selected = [];
     document.querySelectorAll('.row-select:checked').forEach(cb => {

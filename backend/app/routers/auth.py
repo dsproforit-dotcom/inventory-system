@@ -16,6 +16,7 @@ class UserRegister(BaseModel):
     email: str
     full_name: str
     password: str
+    role: str = "viewer"
 
 class Token(BaseModel):
     access_token: str
@@ -75,12 +76,15 @@ async def register(
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Email already exists")
 
+    if data.role not in ["viewer", "manager", "admin"]:
+        raise HTTPException(status_code=400, detail="Invalid role")
+
     user = User(
         username=data.username,
         email=data.email,
         full_name=data.full_name,
         hashed_password=hash_password(data.password),
-        role="viewer"
+        role=data.role
     )
     db.add(user)
     await db.commit()
