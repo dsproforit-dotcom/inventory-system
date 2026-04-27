@@ -234,7 +234,7 @@ async def update_item(
         to_location=data.location,
         quantity=data.quantity,
         responsible=current_user.username,
-        comment="Updated via API"
+        comment=data.notes or ""
     )
     db.add(history)
     await db.commit()
@@ -291,7 +291,7 @@ async def delete_item(
             to_location="DELETED",
             quantity=item.quantity,
             responsible=current_user.username,
-            comment="Deleted via API"
+            comment=item.notes or ""
         )
         db.add(history)
         await db.delete(item)
