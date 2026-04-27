@@ -284,7 +284,7 @@ async def delete_item(
             to_location="DELETED",
             quantity=item.quantity,
             responsible=current_user.username,
-            comment="Deleted via API"
+            comment=item.notes or ""
         )
         db.add(history)
         await db.delete(item)
