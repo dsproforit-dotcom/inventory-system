@@ -97,8 +97,11 @@ const api = {
         const query = location ? `?location=${encodeURIComponent(location)}` : '';
         return fetchAPI("PUT", `/items/${itemId}${query}`, data);
     },
-    deleteItem: (itemId, location = null) => {
-        const query = location ? `?location=${encodeURIComponent(location)}` : '';
+    deleteItem: (itemId, location = null, notes = null) => {
+        const params = new URLSearchParams();
+        if (location) params.append('location', location);
+        if (notes) params.append('notes', notes);
+        const query = params.toString() ? `?${params.toString()}` : '';
         return fetchAPI("DELETE", `/items/${itemId}${query}`);
     },
 

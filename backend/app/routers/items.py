@@ -253,6 +253,7 @@ async def update_item(
 async def delete_item(
     item_id: str,
     location: Optional[str] = Query(None),
+    notes: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_manager)
 ):
@@ -291,7 +292,7 @@ async def delete_item(
             to_location="DELETED",
             quantity=item.quantity,
             responsible=current_user.username,
-            comment=item.notes or ""
+            comment=notes or ""
         )
         db.add(history)
         await db.delete(item)

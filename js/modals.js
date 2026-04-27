@@ -125,7 +125,8 @@ async function deleteItem() {
     btn.disabled = true;
 
     try {
-        const response = await api.deleteItem(currentEditItem.item_id, currentEditItem.location);
+        const notes = document.getElementById('editNotes')?.value?.trim() || null;
+        const response = await api.deleteItem(currentEditItem.item_id, currentEditItem.location, notes);
         btn.innerText = "🗑️ Delete";
         btn.disabled = false;
         closeEditModal();
