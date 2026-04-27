@@ -227,7 +227,7 @@ async def update_item(
         to_location=data.location,
         quantity=data.quantity,
         responsible=current_user.username,
-        comment="Updated via API"
+        comment=data.notes or ""
     )
     db.add(history)
     await db.commit()
