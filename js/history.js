@@ -9,12 +9,12 @@ async function loadHistoryData() {
     try {
         const [histData, usersData] = await Promise.all([
             api.getHistory({ limit: 200 }),
-            api.getUsers()
+            isManager() ? api.getUsers() : Promise.resolve(null)
         ]);
         if (!histData) return;
         fullHistoryData = histData.history;
 
-        // User dropdown-ის populate
+        // User dropdown-ის populate (manager+-ისთვის)
         const select = document.getElementById('historyUser');
         select.innerHTML = '<option value="ALL">All Users</option>';
         if (usersData) {
