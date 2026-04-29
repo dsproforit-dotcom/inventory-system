@@ -98,6 +98,9 @@ async def reset_password(
     current_user: User = Depends(require_admin)
 ):
     """მომხმარებლის პაროლის reset"""
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+
     result = await db.execute(select(User).where(User.username == username))
     user = result.scalar_one_or_none()
     if not user:
