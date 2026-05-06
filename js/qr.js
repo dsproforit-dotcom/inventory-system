@@ -36,15 +36,15 @@ function printQR() {
 
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
-    <html><head><title>QR - ${itemId}</title>
+    <html><head><title>QR - ${escapeHtml(itemId)}</title>
     <style>
       body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 40px; }
       h2 { margin-bottom: 5px; }
       p { color: #666; margin-top: 0; }
     </style></head>
     <body>
-      <h2>${itemName}</h2>
-      <p>${itemId}</p>
+      <h2>${escapeHtml(itemName)}</h2>
+      <p>${escapeHtml(itemId)}</p>
       ${qrHtml}
       <script>window.onload = function() { window.print(); window.close(); }<\/script>
     </body></html>
@@ -72,8 +72,8 @@ function printSelectedQR() {
     <div class="qr-item">
       <div id="qr-${item.id.replace(/[^a-zA-Z0-9]/g, '_')}"></div>
       <div class="qr-label">
-        <strong>${item.name}</strong>
-        <span>${item.id}</span>
+        <strong>${escapeHtml(item.name)}</strong>
+        <span>${escapeHtml(item.id)}</span>
       </div>
     </div>
   `).join('');
@@ -81,7 +81,7 @@ function printSelectedQR() {
     const qrScripts = selected.map(item => {
         const safeId = item.id.replace(/[^a-zA-Z0-9]/g, '_');
         return `new QRCode(document.getElementById('qr-${safeId}'), {
-      text: '${item.id}',
+      text: ${JSON.stringify(item.id)},
       width: 100,
       height: 100,
       colorDark: '#000000',
