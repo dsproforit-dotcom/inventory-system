@@ -2,13 +2,15 @@
 // 📜 HISTORY — ოპერაციების ისტორია
 // =========================================================
 
+const HISTORY_PAGE_SIZE = 200;
+
 async function loadHistoryData() {
     const tbody = document.getElementById('historyResultsBody');
     tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;" class="loading">⏳ Fetching Full History...</td></tr>';
 
     try {
         const [histData, usersData] = await Promise.all([
-            api.getHistory({ limit: 200 }),
+            api.getHistory({ limit: HISTORY_PAGE_SIZE, offset: 0 }),
             isManager() ? api.getUsers() : Promise.resolve(null)
         ]);
         if (!histData) return;
@@ -23,10 +25,36 @@ async function loadHistoryData() {
             });
         }
 
+        updateLoadMoreButton(histData.history.length);
         searchHistory();
     } catch (e) {
         tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:red;">❌ Error: ${e.message}</td></tr>`;
     }
+}
+
+async function loadMoreHistory() {
+    const btn = document.getElementById('loadMoreHistoryBtn');
+    btn.disabled = true;
+    btn.innerText = '⏳ Loading...';
+    try {
+        const data = await api.getHistory({ limit: HISTORY_PAGE_SIZE, offset: fullHistoryData.length });
+        if (data && data.history.length > 0) {
+            fullHistoryData = fullHistoryData.concat(data.history);
+            searchHistory();
+        }
+        updateLoadMoreButton(data ? data.history.length : 0);
+    } catch (e) {
+        showMessage('❌ ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '⬇️ Load More';
+    }
+}
+
+function updateLoadMoreButton(lastBatchSize) {
+    const btn = document.getElementById('loadMoreHistoryBtn');
+    if (!btn) return;
+    btn.style.display = lastBatchSize >= HISTORY_PAGE_SIZE ? 'inline-block' : 'none';
 }
 
 function searchHistory() {
@@ -65,6 +93,23 @@ function searchHistory() {
     drawHistoryTable(results);
 }
 
+const ACTION_DEFAULT_NOTES = {
+    ADD: 'Item added',
+    UPDATE: 'Item updated',
+    DELETE: 'Item deleted',
+    TRANSFER: 'Item transferred',
+    ISSUE: 'Item issued',
+    RESTOCK: 'Stock replenished',
+    'WRITE-OFF': 'Item written off',
+    ERROR: 'Operation failed'
+};
+
+function getDisplayNote(row) {
+    if (row.comment && row.comment.trim()) return escapeHtml(row.comment);
+    const fallback = ACTION_DEFAULT_NOTES[row.action];
+    return fallback ? `<span style="color:#999;font-style:italic;">${fallback}</span>` : '-';
+}
+
 function drawHistoryTable(data) {
     const tbody = document.getElementById('historyResultsBody');
 
@@ -84,7 +129,7 @@ function drawHistoryTable(data) {
       <td data-label="To">${escapeHtml(row.to_location) || '-'}</td>
       <td data-label="Qty">${row.quantity}</td>
       <td data-label="User">${escapeHtml(row.responsible) || '-'}</td>
-      <td data-label="Note">${escapeHtml(row.comment) || '-'}</td>
+      <td data-label="Note">${getDisplayNote(row)}</td>
     </tr>`;
     });
     tbody.innerHTML = html;

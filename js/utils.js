@@ -44,11 +44,18 @@ function displayError(e) {
 // ცხრილის სორტირება
 const sortColumnMap = { 1: 'name', 2: 'category', 3: 'quantity', 4: 'location' };
 let sortDirection = true;
+let currentSortColumn = null;
 function sortTable(columnIndex) {
     if (currentResults.length === 0) return;
     const key = sortColumnMap[columnIndex];
     if (!key) return;
-    sortDirection = !sortDirection;
+    // იგივე column-ი — toggle, სხვა column-ი — დაიწყე ASC-ით
+    if (currentSortColumn === columnIndex) {
+        sortDirection = !sortDirection;
+    } else {
+        sortDirection = true;
+        currentSortColumn = columnIndex;
+    }
     currentResults.sort((a, b) => {
         let valA = a[key], valB = b[key];
         if (typeof valA === 'number' && typeof valB === 'number') return sortDirection ? valA - valB : valB - valA;
