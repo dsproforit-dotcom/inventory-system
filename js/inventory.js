@@ -210,49 +210,43 @@ async function importExcel(input) {
             const confirm_import = confirm(`Found ${rows.length} items. Import all?`);
             if (!confirm_import) return;
 
-            let success = 0;
-            let failed = 0;
-            let errors = [];
-
-            showMessage(`⏳ Importing 0 / ${rows.length} items...`, 'loading');
-
+            const payloads = [];
+            let skipped = 0;
             for (const row of rows) {
-                try {
-                    const payload = {
-                        item_id: String(row['Item ID'] || '').trim() || null,
-                        name: String(row['Name'] || '').trim(),
-                        category: String(row['Category'] || '').trim(),
-                        quantity: parseInt(row['Quantity'] || row['Qty'] || 0),
-                        location: String(row['Location'] || '').trim(),
-                        notes: String(row['Notes'] || '').trim() || null
-                    };
+                const payload = {
+                    item_id: String(row['Item ID'] || '').trim() || null,
+                    name: String(row['Name'] || '').trim(),
+                    category: String(row['Category'] || '').trim(),
+                    quantity: parseInt(row['Quantity'] || row['Qty'] || 0),
+                    location: String(row['Location'] || '').trim(),
+                    notes: String(row['Notes'] || '').trim() || null
+                };
+                if (!payload.name) { skipped++; continue; }
+                payloads.push(payload);
+            }
 
-                    if (!payload.name) {
-                        failed++;
-                        continue;
-                    }
+            showMessage(`⏳ Importing ${payloads.length} items...`, 'loading');
 
-                    await api.createItem(payload);
-                    success++;
-                } catch (e) {
-                    failed++;
-                    errors.push(row['Name'] || 'Unknown');
-                }
-
-                // progress განახლება
-                showMessage(`⏳ Importing ${success + failed} / ${rows.length} items...`, 'loading');
+            let result = { success: 0, failed: 0, errors: [] };
+            try {
+                result = await api.bulkCreateItems(payloads);
+            } catch (e) {
+                showMessage(`❌ Import failed: ${e.message}`, 'error');
+                input.value = '';
+                return;
             }
 
             // input გასუფთავება
             input.value = '';
-            
+
             await fetchFullInventory(true);
             loadDashboardData();
             fullHistoryData = [];
 
+            const totalFailed = result.failed + skipped;
             showMessage(
-                `✅ Import complete! Success: ${success}, Failed: ${failed}`,
-                failed > 0 ? 'error' : 'success'
+                `✅ Import complete! Success: ${result.success}, Failed: ${totalFailed}`,
+                totalFailed > 0 ? 'error' : 'success'
             );
 
             

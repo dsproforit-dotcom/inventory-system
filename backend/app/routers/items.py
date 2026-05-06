@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 import uuid
 from ..core.database import get_db
@@ -152,6 +152,72 @@ async def create_item(
     )
 
     return {"message": f"Item '{data.name}' created successfully", "item_id": item_id}
+
+@router.post("/bulk", status_code=201)
+async def create_items_bulk(
+    items: List[ItemCreate],
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_manager)
+):
+    """რამდენიმე ნივთის ერთდროულად დამატება (Excel import-ისთვის)"""
+    success = 0
+    failed = 0
+    errors = []
+
+    for data in items:
+        try:
+            item_id = data.item_id or str(uuid.uuid4()).split('-')[0].upper()
+
+            # შევამოწმოთ უკვე ხომ არ არსებობს
+            result = await db.execute(
+                select(Item).where(Item.item_id == item_id, Item.location == data.location)
+            )
+            if result.scalar_one_or_none():
+                failed += 1
+                errors.append(f"{data.name}: already exists at {data.location}")
+                continue
+
+            item = Item(
+                item_id=item_id,
+                name=data.name,
+                category=data.category,
+                quantity=data.quantity,
+                location=data.location,
+                notes=data.notes
+            )
+            db.add(item)
+
+            history = History(
+                item_id=item_id,
+                item_name=data.name,
+                action="ADD",
+                from_location="N/A",
+                to_location=data.location,
+                quantity=data.quantity,
+                responsible=current_user.username,
+                comment=data.notes or ""
+            )
+            db.add(history)
+            success += 1
+        except Exception as e:
+            failed += 1
+            errors.append(f"{data.name}: {str(e)}")
+
+    await db.commit()
+
+    if success > 0:
+        await send_telegram_message(
+            f"📦 <b>BULK IMPORT</b>\n"
+            f"✅ Added: {success}\n"
+            f"❌ Failed: {failed}\n"
+            f"👤 By: {current_user.username}"
+        )
+
+    return {
+        "success": success,
+        "failed": failed,
+        "errors": errors[:10]  # max 10 შეცდომა
+    }
 
 @router.get("/{item_id}")
 async def get_item(

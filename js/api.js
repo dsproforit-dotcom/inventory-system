@@ -93,6 +93,7 @@ const api = {
         return fetchAPI("GET", `/items/${query ? "?" + query : ""}`);
     },
     createItem: (data) => fetchAPI("POST", "/items/", data),
+    bulkCreateItems: (items) => fetchAPI("POST", "/items/bulk", items),
     updateItem: (itemId, location, data) => {
         const query = location ? `?location=${encodeURIComponent(location)}` : '';
         return fetchAPI("PUT", `/items/${itemId}${query}`, data);

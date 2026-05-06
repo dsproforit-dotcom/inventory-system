@@ -14,11 +14,12 @@ async def get_history(
     item_id: Optional[str] = Query(None),
     action: Optional[str] = Query(None),
     responsible: Optional[str] = Query(None),
-    limit: int = Query(50, le=200),
+    limit: int = Query(200, le=500),
+    offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """ისტორიის სია ფილტრაციით"""
+    """ისტორიის სია ფილტრაციით + pagination"""
     query = select(History).order_by(History.created_at.desc())
 
     if item_id:
@@ -28,12 +29,13 @@ async def get_history(
     if responsible:
         query = query.where(History.responsible.ilike(f"%{responsible}%"))
 
-    query = query.limit(limit)
+    query = query.limit(limit).offset(offset)
     result = await db.execute(query)
     records = result.scalars().all()
 
     return {
         "total": len(records),
+        "offset": offset,
         "history": [
             {
                 "id": str(r.id),

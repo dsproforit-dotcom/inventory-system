@@ -64,8 +64,8 @@ async def register(
     current_user: User = Depends(require_admin)
 ):
     """ახალი მომხმარებლის რეგისტრაცია (მხოლოდ admin)"""
-    # შევამოწმოთ username უკვე ხომ არ არსებობს
-    result = await db.execute(select(User).where(User.username == data.username))
+    # შევამოწმოთ username უკვე ხომ არ არსებობს (case-insensitive)
+    result = await db.execute(select(User).where(User.username.ilike(data.username)))
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Username already exists")
 
